@@ -220,10 +220,7 @@ const Posts = () => {
   useEffect(() => {
     (async () => {
       try {
-        const token = await getAccessTokenSilently({
-          audience: "https://api.example.com/",
-          scope: "read:posts",
-        });
+        const token = await getAccessTokenSilently();
         const response = await fetch("https://api.example.com/posts", {
           headers: {
             Authorization: `Bearer ${token}`,
