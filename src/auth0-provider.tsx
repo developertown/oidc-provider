@@ -1,14 +1,21 @@
-import React from "react";
-import { OIDCProvider, useAuth as useAuth0 } from "./oidc-provider";
+import React, { useMemo } from "react";
+import { LogoutOptions, OIDCProvider, OIDCProviderState, useAuth, useAuthClient } from "./oidc-provider";
 import { AuthProviderOptions } from "./auth-provider";
+import { getUniqueScopes } from "./utils";
 
-const Auth0Provider: React.FC<AuthProviderOptions> = ({
+type Auth0ProviderOptions = AuthProviderOptions & {
+  audience?: string;
+};
+
+const Auth0Provider: React.FC<Auth0ProviderOptions> = ({
   children,
   domain,
   issuer,
   clientId,
   redirectUri,
+  useRefreshTokens = false,
   scope = "openid profile email",
+  audience,
   ...events
 }) => (
   <OIDCProvider
@@ -20,16 +27,36 @@ const Auth0Provider: React.FC<AuthProviderOptions> = ({
       end_session_endpoint: `https://${domain}/v2/logout`,
     }}
     client_id={clientId}
-    scope={scope}
+    scope={getUniqueScopes(scope, useRefreshTokens ? "offline_access" : "")}
     response_type="code"
     loadUserInfo={false}
-    automaticSilentRenew
+    automaticSilentRenew={useRefreshTokens}
     redirect_uri={redirectUri}
     post_logout_redirect_uri={redirectUri}
+    extraQueryParams={audience ? { audience } : undefined}
     {...events}
   >
     {children}
   </OIDCProvider>
 );
+
+const useAuth0 = (): Omit<OIDCProviderState, "client"> => {
+  const client = useAuthClient();
+  const state = useAuth();
+  return useMemo(
+    () => ({
+      ...state,
+      logout: (opt?: LogoutOptions) =>
+        state.logout({
+          ...opt,
+          extraQueryParams: {
+            ...(opt ? opt.extraQueryParams : {}),
+            client_id: client.settings.client_id,
+          },
+        }),
+    }),
+    [state, client],
+  );
+};
 
 export { Auth0Provider, useAuth0 };

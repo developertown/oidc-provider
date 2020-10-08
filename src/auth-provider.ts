@@ -8,5 +8,6 @@ export type AuthProviderOptions = Events & {
   clientId: string;
   redirectUri?: string;
   scope?: string;
+  useRefreshTokens?: boolean;
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
