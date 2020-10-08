@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createContext, useCallback, useReducer, useContext } from "react";
-import { UserManager, UserManagerSettings } from "oidc-client";
+import { User, UserManager, UserManagerSettings } from "oidc-client";
 import { hasAuthParams } from "./utils";
 import reducer from "./reducer";
 import { initialState, AuthState } from "./state";
@@ -30,16 +30,20 @@ const defaultOnRedirectCallback = (appState?: AppState): void => {
 const OIDCContext = createContext<OIDCProviderState | undefined>(undefined);
 
 export type Events = {
+  onAccessTokenChanged?: (accessToken: string) => void;
   onAccessTokenExpiring?: () => void;
   onAccessTokenExpired?: () => void;
+  onAccessTokenRefreshError?: (error: Error) => void;
   onRedirectCallback?: RedirectCallback;
 };
 type Props = UserManagerSettings & Events;
 
 export const OIDCProvider: React.FC<Props> = ({
   children,
+  onAccessTokenChanged,
   onAccessTokenExpiring,
   onAccessTokenExpired,
+  onAccessTokenRefreshError,
   onRedirectCallback = defaultOnRedirectCallback,
   ...props
 }) => {
@@ -94,6 +98,20 @@ export const OIDCProvider: React.FC<Props> = ({
   }, [client, onAccessTokenExpiring]);
 
   useEffect(() => {
+    let userLoadedCallback: ((user: User) => void) | undefined;
+
+    if (onAccessTokenChanged) {
+      userLoadedCallback = ({ access_token: accessToken }) => onAccessTokenChanged(accessToken);
+      client.events.addUserLoaded(userLoadedCallback);
+    }
+    return () => {
+      if (userLoadedCallback) {
+        client.events.removeUserLoaded(userLoadedCallback);
+      }
+    };
+  }, [client, onAccessTokenChanged]);
+
+  useEffect(() => {
     if (onAccessTokenExpired) {
       client.events.addAccessTokenExpired(onAccessTokenExpired);
     }
@@ -103,6 +121,17 @@ export const OIDCProvider: React.FC<Props> = ({
       }
     };
   }, [client, onAccessTokenExpired]);
+
+  useEffect(() => {
+    if (onAccessTokenRefreshError) {
+      client.events.addSilentRenewError(onAccessTokenRefreshError);
+    }
+    return () => {
+      if (onAccessTokenRefreshError) {
+        client.events.removeSilentRenewError(onAccessTokenRefreshError);
+      }
+    };
+  }, [client, onAccessTokenRefreshError]);
 
   return (
     <OIDCContext.Provider
