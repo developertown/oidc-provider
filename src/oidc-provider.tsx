@@ -29,8 +29,16 @@ const defaultOnRedirectCallback = (appState?: AppState): void => {
 
 const OIDCContext = createContext<OIDCProviderState | undefined>(undefined);
 
+export type Token = {
+  idToken: string;
+  accessToken?: string;
+  refreshToken?: string;
+  scope: string;
+  expiresAt: number;
+};
+
 export type Events = {
-  onAccessTokenChanged?: (accessToken: string) => void;
+  onAccessTokenChanged?: (token: Token) => void;
   onAccessTokenExpiring?: () => void;
   onAccessTokenExpired?: () => void;
   onAccessTokenRefreshError?: (error: Error) => void;
@@ -101,7 +109,20 @@ export const OIDCProvider: React.FC<Props> = ({
     let userLoadedCallback: ((user: User) => void) | undefined;
 
     if (onAccessTokenChanged) {
-      userLoadedCallback = ({ access_token: accessToken }) => onAccessTokenChanged(accessToken);
+      userLoadedCallback = ({
+        id_token: idToken,
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expires_at: expiresAt,
+        scope,
+      }) =>
+        onAccessTokenChanged({
+          idToken,
+          accessToken,
+          refreshToken,
+          scope,
+          expiresAt,
+        });
       client.events.addUserLoaded(userLoadedCallback);
     }
     return () => {
