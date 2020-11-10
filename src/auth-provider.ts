@@ -6,6 +6,7 @@ export type AuthProviderOptions = Events & {
   domain: string;
   issuer?: string;
   clientId: string;
+  clientSecret?: string;
   redirectUri?: string;
   scope?: string;
   useRefreshTokens?: boolean;

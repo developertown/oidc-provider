@@ -134,6 +134,63 @@ function App() {
 export default App;
 ```
 
+### Azure AD B2C
+
+Configure the SDK by wrapping your application in `AzureProvider`:
+
+```jsx
+// src/index.js
+import React from "react";
+import ReactDOM from "react-dom";
+import { AzureProvider } from "@developertown/oidc-provider";
+import App from "./App";
+
+ReactDOM.render(
+  <AzureProvider
+    domain="AZURE_AD_TENANT.b2clogin.com/AZURE_AD_TENANT.onmicrosoft.com"
+    policy="b2c_1a_signup_signin"
+    issuer="YOUR_AZURE_AD__ISSUER"
+    clientId="YOUR_AZURE_AD_CLIENT_ID"
+    clientSecret="YOUR_AZURE_AD_CLIENT_SECRET"
+    redirectUri={window.location.origin}
+  >
+    <App />
+  </AzureProvider>,
+  document.getElementById("app"),
+);
+```
+
+Use the `useAzure` hook in your components to access authentication state (`isLoading`, `isAuthenticated` and `user`) and authentication methods (`loginWithRedirect` and `logout`):
+
+```jsx
+// src/App.js
+import React from "react";
+import { useAzure } from "@developertown/oidc-provider";
+
+function App() {
+  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAzure();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Oops... {error.message}</div>;
+  }
+
+  if (isAuthenticated) {
+    return (
+      <div>
+        Hello {user.name} <button onClick={() => logout()}>Log out</button>
+      </div>
+    );
+  } else {
+    return <button onClick={loginWithRedirect}>Log in</button>;
+  }
+}
+
+export default App;
+```
+
 ### Other OpenID Connect
 
 This library can be configured to work with an OpenID Connect authentication provider. Configure the SDK by wrapping your application in `OIDCProvider` see [IdentityModel/oidc-client-js](https://github.com/IdentityModel/oidc-client-js/wiki#usermanager) for the full list of options when configuring the `OIDCProvider`:

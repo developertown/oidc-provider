@@ -12,6 +12,7 @@ const Auth0Provider: React.FC<Auth0ProviderOptions> = ({
   domain,
   issuer,
   clientId,
+  clientSecret,
   redirectUri,
   useRefreshTokens = false,
   scope = "openid profile email",
@@ -27,6 +28,7 @@ const Auth0Provider: React.FC<Auth0ProviderOptions> = ({
       end_session_endpoint: `https://${domain}/v2/logout`,
     }}
     client_id={clientId}
+    client_secret={clientSecret}
     scope={getUniqueScopes(scope, useRefreshTokens ? "offline_access" : "")}
     response_type="code"
     loadUserInfo={false}

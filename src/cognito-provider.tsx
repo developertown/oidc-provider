@@ -8,6 +8,7 @@ const CognitoProvider: React.FC<AuthProviderOptions> = ({
   domain,
   issuer,
   clientId,
+  clientSecret,
   redirectUri,
   useRefreshTokens = false,
   scope = "openid",
@@ -22,6 +23,7 @@ const CognitoProvider: React.FC<AuthProviderOptions> = ({
       end_session_endpoint: `https://${domain}/logout`,
     }}
     client_id={clientId}
+    client_secret={clientSecret}
     scope={getUniqueScopes(scope)}
     response_type="code"
     loadUserInfo={false}
