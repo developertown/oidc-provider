@@ -29,7 +29,7 @@ const AzureProvider: React.FC<AzureProviderOptions> = ({
     }}
     client_id={clientId}
     client_secret={clientSecret}
-    scope={getUniqueScopes(scope, clientId, useRefreshTokens ? "offline_access" : "")}
+    scope={getUniqueScopes(scope, useRefreshTokens ? "offline_access" : "")}
     response_type="code"
     loadUserInfo={false}
     automaticSilentRenew={useRefreshTokens}
