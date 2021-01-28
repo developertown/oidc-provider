@@ -1,5 +1,6 @@
 import React from "react";
 import { Events } from "./oidc-provider";
+import { StorageType } from "./token-storage";
 
 export type AuthProviderOptions = Events & {
   children?: React.ReactNode;
@@ -10,5 +11,6 @@ export type AuthProviderOptions = Events & {
   redirectUri?: string;
   scope?: string;
   useRefreshTokens?: boolean;
+  tokenStorage?: StorageType;
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };

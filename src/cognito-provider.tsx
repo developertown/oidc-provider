@@ -12,7 +12,7 @@ const CognitoProvider: React.FC<AuthProviderOptions> = ({
   redirectUri,
   useRefreshTokens = false,
   scope = "openid",
-  ...events
+  ...props
 }) => (
   <OIDCProvider
     authority={domain}
@@ -30,7 +30,7 @@ const CognitoProvider: React.FC<AuthProviderOptions> = ({
     automaticSilentRenew={useRefreshTokens}
     redirect_uri={redirectUri}
     post_logout_redirect_uri={redirectUri}
-    {...events}
+    {...props}
   >
     {children}
   </OIDCProvider>

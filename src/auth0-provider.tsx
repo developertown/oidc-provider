@@ -17,7 +17,7 @@ const Auth0Provider: React.FC<Auth0ProviderOptions> = ({
   useRefreshTokens = false,
   scope = "openid profile email",
   audience,
-  ...events
+  ...props
 }) => (
   <OIDCProvider
     authority={domain}
@@ -36,7 +36,7 @@ const Auth0Provider: React.FC<Auth0ProviderOptions> = ({
     redirect_uri={redirectUri}
     post_logout_redirect_uri={redirectUri}
     extraQueryParams={audience ? { audience } : undefined}
-    {...events}
+    {...props}
   >
     {children}
   </OIDCProvider>

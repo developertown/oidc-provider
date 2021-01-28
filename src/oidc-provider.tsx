@@ -1,9 +1,10 @@
 import React, { useEffect, useState, createContext, useCallback, useReducer, useContext } from "react";
-import { User, UserManager, UserManagerSettings } from "oidc-client";
+import { User, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
 import { hasAuthParams } from "./utils";
 import reducer from "./reducer";
 import { initialState, AuthState } from "./state";
 import { initialize, error } from "./actions";
+import tokenStorageForType, { StorageTypes, StorageType } from "./token-storage";
 
 export type AppState = {
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -44,7 +45,10 @@ export type Events = {
   onAccessTokenRefreshError?: (error: Error) => void;
   onRedirectCallback?: RedirectCallback;
 };
-type Props = UserManagerSettings & Events;
+type Props = Omit<UserManagerSettings, "userStore"> &
+  Events & {
+    tokenStorage?: StorageType;
+  };
 
 export const OIDCProvider: React.FC<Props> = ({
   children,
@@ -53,9 +57,16 @@ export const OIDCProvider: React.FC<Props> = ({
   onAccessTokenExpired,
   onAccessTokenRefreshError,
   onRedirectCallback = defaultOnRedirectCallback,
+  tokenStorage = StorageTypes.SessionStorage,
   ...props
 }) => {
-  const [client] = useState(() => new UserManager(props));
+  const [client] = useState(
+    () =>
+      new UserManager({
+        userStore: new WebStorageStateStore({ store: tokenStorageForType(tokenStorage) }),
+        ...props,
+      }),
+  );
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const loginWithRedirect = useCallback((opts?: LoginWithRedirectOptions) => client.signinRedirect(opts), [client]);

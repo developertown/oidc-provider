@@ -17,7 +17,7 @@ const AzureProvider: React.FC<AzureProviderOptions> = ({
   useRefreshTokens = false,
   scope = "openid email profile",
   policy,
-  ...events
+  ...props
 }) => (
   <OIDCProvider
     authority={domain}
@@ -35,7 +35,7 @@ const AzureProvider: React.FC<AzureProviderOptions> = ({
     automaticSilentRenew={useRefreshTokens}
     redirect_uri={redirectUri}
     post_logout_redirect_uri={redirectUri}
-    {...events}
+    {...props}
   >
     {children}
   </OIDCProvider>
