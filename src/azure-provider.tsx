@@ -3,7 +3,7 @@ import { OIDCProvider, useAuth as useAzure } from "./oidc-provider";
 import { AuthProviderOptions } from "./auth-provider";
 import { getUniqueScopes } from "./utils";
 
-type AzureProviderOptions = AuthProviderOptions & {
+export type AzureProviderOptions = AuthProviderOptions & {
   policy: string;
 };
 

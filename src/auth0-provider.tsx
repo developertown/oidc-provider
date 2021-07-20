@@ -3,7 +3,7 @@ import { LogoutOptions, OIDCProvider, OIDCProviderState, useAuth, useAuthClient 
 import { AuthProviderOptions } from "./auth-provider";
 import { getUniqueScopes } from "./utils";
 
-type Auth0ProviderOptions = AuthProviderOptions & {
+export type Auth0ProviderOptions = AuthProviderOptions & {
   audience?: string;
 };
 

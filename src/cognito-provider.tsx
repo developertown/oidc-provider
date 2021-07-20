@@ -3,7 +3,9 @@ import { OIDCProvider, useAuth, useAuthClient, LogoutOptions, OIDCProviderState 
 import { AuthProviderOptions } from "./auth-provider";
 import { getUniqueScopes } from "./utils";
 
-const CognitoProvider: React.FC<AuthProviderOptions> = ({
+export type CognitoProviderOptions = AuthProviderOptions;
+
+const CognitoProvider: React.FC<CognitoProviderOptions> = ({
   children,
   domain,
   issuer,

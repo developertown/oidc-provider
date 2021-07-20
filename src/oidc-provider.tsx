@@ -45,7 +45,7 @@ export type Events = {
   onAccessTokenRefreshError?: (error: Error) => void;
   onRedirectCallback?: RedirectCallback;
 };
-type Props = Omit<UserManagerSettings, "userStore"> &
+export type Props = Omit<UserManagerSettings, "userStore"> &
   Events & {
     tokenStorage?: StorageType;
   };
