@@ -134,6 +134,14 @@ export const OIDCProvider: React.FC<Props> = ({
           scope,
           expiresAt,
         });
+
+      (async (): Promise<void> => {
+        const user = await client.getUser();
+        if (user) {
+          userLoadedCallback(user);
+        }
+      })();
+
       client.events.addUserLoaded(userLoadedCallback);
     }
     return () => {
