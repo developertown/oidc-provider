@@ -12,6 +12,8 @@ export type AppState = {
 export type RedirectCallback = (appState: AppState) => void;
 export type LoginWithRedirectOptions = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type LoginWithRedirect = (opts?: LoginWithRedirectOptions) => Promise<void>;
+export type LoginSilentOptions = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type LoginSilent = (opts?: LoginSilentOptions) => Promise<void>;
 export type GetTokenSilentlyOptions = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type GetTokenSilently = (opts?: GetTokenSilentlyOptions) => Promise<string>;
 export type LogoutOptions = any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -20,6 +22,7 @@ export type Logout = (opts?: LogoutOptions) => Promise<void>;
 export type OIDCProviderState = AuthState & {
   client: UserManager;
   loginWithRedirect: LoginWithRedirect;
+  loginSilent: LoginSilent;
   getAccessTokenSilently: GetTokenSilently;
   logout: Logout;
 };
@@ -70,6 +73,18 @@ export const OIDCProvider: React.FC<Props> = ({
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const loginWithRedirect = useCallback((opts?: LoginWithRedirectOptions) => client.signinRedirect(opts), [client]);
+
+  const loginSilent = useCallback(
+    async (opts?: LoginWithRedirectOptions) => {
+      try {
+        const user = await client.signinSilent(opts);
+        dispatch(initialize({ isAuthenticated: Boolean(user), user: user?.profile }));
+      } catch (e) {
+        dispatch(error(e));
+      }
+    },
+    [client],
+  );
 
   const getAccessTokenSilently = useCallback(
     async (opts?: GetTokenSilentlyOptions) => {
@@ -179,6 +194,7 @@ export const OIDCProvider: React.FC<Props> = ({
         ...state,
         client,
         loginWithRedirect,
+        loginSilent,
         getAccessTokenSilently,
         logout,
       }}
