@@ -1,0 +1,63 @@
+on:
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2.4.0
+        with:
+          node-version: "14.x"
+
+      - name: Install Yarn
+        run: npm install --global yarn
+        shell: bash
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1.81.0
+        with:
+          ruby-version: "2.4"
+
+      - name: Install License Checker
+        run: gem install license_finder
+        shell: bash
+
+      - name: Install Dependencies
+        run: node ./common/scripts/install-run-rush.js install
+        shell: bash
+
+      - name: Check Licenses
+        run: license_finder
+        shell: bash
+        working-directory: ./packages/oidc-provider
+
+      - name: Lint
+        run: yarn lint
+        shell: bash
+        working-directory: ./packages/oidc-provider
+
+      - name: Check format
+        run: yarn format:check
+        shell: bash
+        working-directory: ./packages/oidc-provider
+
+      - name: Test Coverage
+        run: yarn test:coverage
+        shell: bash
+        working-directory: ./packages/oidc-provider
+
+      - name: Build
+        run: node common/scripts/install-run-rush.js rebuild --verbose
+        shell: bash
+
+      - name: Publish Build Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: ./packages/oidc-provider/dist

@@ -1,0 +1,64 @@
+{
+  "name": "@developertown/oidc-provider",
+  "version": "0.0.9",
+  "description": "oidc-provider",
+  "author": "",
+  "license": "MIT",
+  "repository": "",
+  "main": "dist/index.js",
+  "module": "dist/oidc-provider.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "tsdx watch --noClean",
+    "build": "tsdx build",
+    "clean": "rimraf ./dist",
+    "test": "tsdx test --passWithNoTests",
+    "test:watch": "yarn run test --maxWorkers=25% --watchAll",
+    "test:coverage": "yarn run test --runInBand --watchAll=false --coverage --reporters=default --reporters=jest-junit --testResultsProcessor=jest-sonar-reporter",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "yarn run lint --fix",
+    "format": "prettier --ignore-unknown '**/*.*'",
+    "format:fix": "yarn run format --write",
+    "format:check": "yarn run format --check",
+    "license:check": "license_finder",
+    "license:permit": "license_finder permitted_licenses add",
+    "license:approve-package": "license_finder approvals add",
+    "license:add": "license_finder licenses add"
+  },
+  "dependencies": {
+    "oidc-client": "^1.11.4",
+    "typescript-fsa": "^3.0.0",
+    "typescript-fsa-reducers": "^1.2.2",
+    "regenerator-runtime": "~0.13.9"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.0",
+    "@types/jest": "^26.0.23",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "babel-loader": "8.1.0",
+    "eslint": "^7.14.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "jest": "26.6.0",
+    "jest-junit": "^12.0.0",
+    "jest-sonar-reporter": "^2.0.0",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.2.0",
+    "typescript": "^4.2.4"
+  },
+  "peerDependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  }
+}
