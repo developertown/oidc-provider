@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+.App-token {
+  white-space: pre;
+  text-align: left;
+  font-family: monospace;
+  overflow-x: scroll;
+  width: 100%;
+}
