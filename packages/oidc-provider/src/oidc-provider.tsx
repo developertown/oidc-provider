@@ -217,7 +217,9 @@ export const useAuthClient = (): UserManager => {
   return client;
 };
 
-export const useAuth = (): Omit<OIDCProviderState, "client"> => {
+export type AuthProviderState = Omit<OIDCProviderState, "client">;
+
+export const useAuth = (): AuthProviderState => {
   const { client, ...state } = useOIDC(); // eslint-disable-line @typescript-eslint/no-unused-vars
   return state;
 };
