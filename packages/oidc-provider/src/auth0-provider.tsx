@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { LogoutOptions, OIDCProvider, OIDCProviderState, useAuth, useAuthClient } from "./oidc-provider";
+import { AuthProviderState, LogoutOptions, OIDCProvider, useAuth, useAuthClient } from "./oidc-provider";
 import { AuthProviderOptions } from "./auth-provider";
 import { getUniqueScopes } from "./utils";
 
@@ -42,7 +42,7 @@ const Auth0Provider: React.FC<Auth0ProviderOptions> = ({
   </OIDCProvider>
 );
 
-const useAuth0 = (): Omit<OIDCProviderState, "client"> => {
+const useAuth0 = (): AuthProviderState => {
   const client = useAuthClient();
   const state = useAuth();
   return useMemo(
