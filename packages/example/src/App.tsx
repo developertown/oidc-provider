@@ -20,7 +20,12 @@ const App = () => {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
-        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Learn React
         </a>
         {isAuthenticated ? (
@@ -54,8 +59,12 @@ const AuthenticatedApp = () => {
       useRefreshTokens
       redirectUri={window.location.origin}
       onAccessTokenExpiring={() => console.warn("user session expiring")}
-      onAccessTokenChanged={(token) => console.info("user session token", token)}
-      onAccessTokenRefreshError={(error) => console.error("failed to refresh token", error)}
+      onAccessTokenChanged={(token: any) =>
+        console.info("user session token", token)
+      }
+      onAccessTokenRefreshError={(error: any) =>
+        console.error("failed to refresh token", error)
+      }
       onAccessTokenExpired={() => console.error("user session expired")}
     >
       <App />
