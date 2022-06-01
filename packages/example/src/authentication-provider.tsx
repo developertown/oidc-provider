@@ -21,7 +21,7 @@ import React, { createContext, useCallback, useContext, useState } from "react";
 
 const AccessTokenContext = createContext<Token | undefined>(undefined);
 
-const AccessTokenProvider: React.FC<{ accessToken?: Token }> = ({
+const AccessTokenProvider: React.FC<{ accessToken?: Token, children?: React.ReactNode }> = ({
   accessToken,
   children,
 }) => {
@@ -37,7 +37,7 @@ const AccessTokenProvider: React.FC<{ accessToken?: Token }> = ({
   );
 };
 
-export type AuthenticationProviderProps = OpenIDAuthenticationProviderProps;
+export type AuthenticationProviderProps = OpenIDAuthenticationProviderProps & {children?: React.ReactNode};
 
 export const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({
   children,

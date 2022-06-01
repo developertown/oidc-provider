@@ -50,6 +50,7 @@ export type Events = {
 };
 export type Props = Omit<UserManagerSettings, "userStore"> &
   Events & {
+    children?: React.ReactNode;
     tokenStorage?: StorageType;
   };
 
