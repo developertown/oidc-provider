@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createContext, useCallback, useReducer, useContext } from "react";
-import { User, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
+import { User, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client-ts";
 import { hasAuthParams } from "./utils";
 import reducer from "./reducer";
 import { initialState, AuthState } from "./state";
@@ -15,7 +15,7 @@ export type LoginWithRedirect = (opts?: LoginWithRedirectOptions) => Promise<voi
 export type LoginSilentOptions = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type LoginSilent = (opts?: LoginSilentOptions) => Promise<void>;
 export type GetTokenSilentlyOptions = any; // eslint-disable-line @typescript-eslint/no-explicit-any
-export type GetTokenSilently = (opts?: GetTokenSilentlyOptions) => Promise<string>;
+export type GetTokenSilently = (opts?: GetTokenSilentlyOptions) => Promise<string | undefined>;
 export type LogoutOptions = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type Logout = (opts?: LogoutOptions) => Promise<void>;
 
@@ -81,7 +81,7 @@ export const OIDCProvider: React.FC<Props> = ({
         const user = await client.signinSilent(opts);
         dispatch(initialize({ isAuthenticated: Boolean(user), user: user?.profile }));
       } catch (e) {
-        dispatch(error(e));
+        dispatch(error(e as Error));
       }
     },
     [client],
@@ -94,11 +94,11 @@ export const OIDCProvider: React.FC<Props> = ({
         throw new Error("User is not authenticated, cannot get access token silently");
       }
       const { access_token: currentAccessToken, expires_in: expiresIn } = user;
-      if (expiresIn > client.settings.accessTokenExpiringNotificationTime!) {
+      if (expiresIn && expiresIn > client.settings.accessTokenExpiringNotificationTimeInSeconds!) {
         return currentAccessToken;
       } else {
-        const { access_token: accessToken } = await client.signinSilent(opts);
-        return accessToken;
+        const user = await client.signinSilent(opts);
+        return user?.access_token;
       }
     },
     [client],
@@ -111,12 +111,12 @@ export const OIDCProvider: React.FC<Props> = ({
       try {
         if (hasAuthParams()) {
           const token = await client.signinRedirectCallback();
-          onRedirectCallback(token?.state);
+          onRedirectCallback(token?.state as AppState);
         }
         const user = await client.getUser();
         dispatch(initialize({ isAuthenticated: Boolean(user), user: user?.profile }));
       } catch (e) {
-        dispatch(error(e));
+        dispatch(error(e as Error));
       }
     })();
   }, [client, onRedirectCallback]);
@@ -144,11 +144,11 @@ export const OIDCProvider: React.FC<Props> = ({
         scope,
       }) =>
         onAccessTokenChanged({
-          idToken,
+          idToken: idToken ?? "",
           accessToken,
           refreshToken,
-          scope,
-          expiresAt,
+          scope: scope ?? "",
+          expiresAt: expiresAt ?? 0,
         });
 
       (async (): Promise<void> => {

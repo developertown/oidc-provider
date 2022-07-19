@@ -8,7 +8,7 @@ export type AuthProviderOptions = Events & {
   issuer?: string;
   clientId: string;
   clientSecret?: string;
-  redirectUri?: string;
+  redirectUri: string;
   scope?: string;
   useRefreshTokens?: boolean;
   tokenStorage?: StorageType;

@@ -29,8 +29,7 @@
     "test:watch": "yarn run test --maxWorkers=25% --watchAll"
   },
   "dependencies": {
-    "oidc-client": "^1.11.4",
-    "regenerator-runtime": "~0.13.9",
+    "oidc-client-ts": "^2.0.5",
     "typescript-fsa": "^3.0.0",
     "typescript-fsa-reducers": "^1.2.2"
   },

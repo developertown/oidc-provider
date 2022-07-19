@@ -1,10 +1,10 @@
-import { Profile } from "oidc-client";
+import { UserProfile } from "oidc-client-ts";
 
 export interface AuthState {
   error?: Error;
   isAuthenticated: boolean;
   isLoading: boolean;
-  user?: Profile;
+  user?: UserProfile;
 }
 
 export const initialState: AuthState = {

@@ -1,6 +1,6 @@
-import { InMemoryWebStorage } from "oidc-client";
+import { InMemoryWebStorage } from "oidc-client-ts";
 
-export type TokenStorage = Omit<Storage, "clear">;
+export type TokenStorage = Storage;
 export enum StorageTypes {
   LocalStorage = "localStorage",
   SessionStorage = "sessionStorage",
