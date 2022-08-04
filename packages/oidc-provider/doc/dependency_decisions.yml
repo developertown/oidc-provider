@@ -104,3 +104,17 @@
     :why:
     :versions: []
     :when: 2021-03-11 17:21:53.024938000 Z
+- - :license
+  - react
+  - MIT
+  - :who:
+    :why:
+    :versions: []
+    :when: 2021-03-11 17:21:53.024938000 Z
+- - :license
+  - react-dom
+  - MIT
+  - :who:
+    :why:
+    :versions: []
+    :when: 2021-03-11 17:21:53.024938000 Z

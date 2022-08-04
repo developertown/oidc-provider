@@ -1,0 +1,50 @@
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "cache": true
+    },
+    "e2e": {
+      "outputs": ["test-results/**"],
+      "dependsOn": [],
+      "cache": true
+    },
+    "test": {
+      "outputs": [],
+      "dependsOn": [],
+      "cache": true
+    },
+    "test:coverage": {
+      "outputs": ["coverage/**"],
+      "dependsOn": [],
+      "cache": true
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "lint:fix": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "start": {
+      "cache": false
+    },
+    "clean": {
+      "cache": false
+    },
+    "format": {
+      "cache": false
+    },
+    "format:check": {
+      "cache": true
+    },
+    "format:fix": {
+      "cache": true
+    },
+    "license:check": {
+      "cache": true
+    }
+  }
+}
