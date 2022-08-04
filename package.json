@@ -1,0 +1,29 @@
+{
+    "name": "oidc-provider",
+    "private": true,
+    "workspaces": [
+      "packages/*"
+    ],
+    "scripts": {
+      "start": "turbo run start --no-cache --parallel --continue",
+      "build": "turbo run build",
+      "test": "turbo run test",
+      "test:coverage": "turbo run test:coverage",
+      "clean": "turbo run clean && rm -rf node_modules --continue",
+      "lint": "turbo run lint --parallel",
+      "lint:fix": "turbo run lint:fix --parallel",
+      "format": "turbo run format --parallel",
+      "format:check": "turbo run format:check  --parallel",
+      "format:fix": "turbo run format:fix  --parallel",
+      "license:check": "turbo run license:check --parallel"
+    },
+    "devDependencies": {
+      "turbo": "latest"
+    },
+    "engines": {
+      "npm": ">=7.0.0",
+      "node": ">=14.0.0"
+    },
+    "packageManager": "yarn@1.22.18"
+  }
+  

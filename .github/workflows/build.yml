@@ -29,31 +29,27 @@ jobs:
         shell: bash
 
       - name: Install Dependencies
-        run: node ./common/scripts/install-run-rush.js install
+        run: yarn install --frozen-lockfile
         shell: bash
 
       - name: Check Licenses
-        run: license_finder
+        run: yarn license:check
         shell: bash
-        working-directory: ./packages/oidc-provider
 
       - name: Lint
         run: yarn lint
         shell: bash
-        working-directory: ./packages/oidc-provider
 
       - name: Check format
         run: yarn format:check
         shell: bash
-        working-directory: ./packages/oidc-provider
 
       - name: Test Coverage
         run: yarn test:coverage
         shell: bash
-        working-directory: ./packages/oidc-provider
 
       - name: Build
-        run: node common/scripts/install-run-rush.js rebuild --verbose
+        run: yarn build
         shell: bash
 
       - name: Publish Build Artifacts
