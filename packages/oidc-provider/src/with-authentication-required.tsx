@@ -1,10 +1,13 @@
-import React, { ComponentType, useEffect, FC } from "react";
+import React, { ComponentType, FC, useEffect, useState } from "react";
 import { useAuth } from "./oidc-provider";
 
 const defaultOnRedirecting = (): JSX.Element => <></>;
+const defaultOnError = (error: Error): JSX.Element => <>{error.message}</>;
 
 export interface WithAuthenticationRequiredOptions {
+  onInitializing?: () => JSX.Element;
   onRedirecting?: () => JSX.Element;
+  onError?: (error: Error) => JSX.Element;
 }
 
 const withAuthenticationRequired =
@@ -13,19 +16,36 @@ const withAuthenticationRequired =
     options: WithAuthenticationRequiredOptions = {},
   ): FC<P> =>
   (props: P): JSX.Element => {
-    const { isAuthenticated, isLoading, loginWithRedirect } = useAuth();
-    const { onRedirecting = defaultOnRedirecting } = options;
+    const { isAuthenticated, isLoading: isInitializing, error, loginWithRedirect } = useAuth();
+    const [isLoading, setLoading] = useState(false);
+    const hasError = Boolean(error);
+    const {
+      onInitializing = defaultOnRedirecting,
+      onRedirecting = defaultOnRedirecting,
+      onError = defaultOnError,
+    } = options;
 
     useEffect(() => {
-      if (isLoading || isAuthenticated) {
+      if (isInitializing || isLoading || isAuthenticated || hasError) {
         return;
       }
-      (async (): Promise<void> => {
-        await loginWithRedirect();
-      })();
-    }, [isLoading, isAuthenticated, loginWithRedirect]);
+      setLoading(true);
+      loginWithRedirect().finally(() => setLoading(false));
+    }, [isInitializing, isLoading, isAuthenticated, hasError, loginWithRedirect]);
 
-    return isAuthenticated ? <Component {...props} /> : onRedirecting();
+    if (isInitializing) {
+      return onInitializing();
+    }
+
+    if (isLoading) {
+      return onRedirecting();
+    }
+
+    if (hasError) {
+      return onError(error!);
+    }
+
+    return isAuthenticated ? <Component {...props} /> : <>{/*Should by impossible*/}</>;
   };
 
 export default withAuthenticationRequired;
