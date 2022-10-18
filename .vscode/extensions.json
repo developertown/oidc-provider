@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "EditorConfig.EditorConfig",
+    "esbenp.prettier-vscode",
+    "mgmcdermott.vscode-language-babel",
+    "VisualStudioExptTeam.vscodeintellicode",
+    "wix.vscode-import-cost"
+  ]
+}

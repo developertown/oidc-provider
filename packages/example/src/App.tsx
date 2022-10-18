@@ -1,11 +1,11 @@
-import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import {
   AuthenticationProvider,
   useAccessToken,
   useAuth,
+  withAuthenticationRequired,
 } from "./authentication-provider";
+import logo from "./logo.svg";
 
 const App = () => {
   const { user, loginWithRedirect, logout, isAuthenticated } = useAuth();
@@ -38,6 +38,12 @@ const App = () => {
   );
 };
 
+const RequiredAuthApp = withAuthenticationRequired(App, {
+  onInitializing: () => <>Initializing Auth</>,
+  onRedirecting: () => <>Redirecting to Login</>,
+  onError: (error: Error) => <>{error.message}</>,
+});
+
 const AuthenticatedApp = () => {
   return (
     <AuthenticationProvider
@@ -66,7 +72,10 @@ const AuthenticatedApp = () => {
       }
       onAccessTokenExpired={() => console.error("user session expired")}
     >
-      <App />
+      {
+        //<App />
+        <RequiredAuthApp />
+      }
     </AuthenticationProvider>
   );
 };
