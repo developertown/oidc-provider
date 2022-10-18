@@ -1,10 +1,10 @@
-import React, { useEffect, useState, createContext, useCallback, useReducer, useContext } from "react";
 import { User, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client-ts";
-import { hasAuthParams } from "./utils";
+import React, { createContext, useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
+import { error, initialize } from "./actions";
 import reducer from "./reducer";
-import { initialState, AuthState } from "./state";
-import { initialize, error } from "./actions";
-import tokenStorageForType, { StorageTypes, StorageType } from "./token-storage";
+import { AuthState, initialState } from "./state";
+import tokenStorageForType, { StorageType, StorageTypes } from "./token-storage";
+import { hasAuthParams } from "./utils";
 
 export type AppState = {
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -106,7 +106,14 @@ export const OIDCProvider: React.FC<Props> = ({
 
   const logout = useCallback((opts?: LogoutOptions) => client.signoutRedirect(opts), [client]);
 
+  const didInitialize = useRef(false);
+
   useEffect(() => {
+    if (didInitialize.current) {
+      return;
+    }
+    didInitialize.current = true;
+
     (async (): Promise<void> => {
       try {
         if (hasAuthParams()) {
