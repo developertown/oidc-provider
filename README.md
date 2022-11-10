@@ -44,7 +44,7 @@ ReactDOM.render(
   >
     <App />
   </Auth0Provider>,
-  document.getElementById("app"),
+  document.getElementById("app")
 );
 ```
 
@@ -56,7 +56,14 @@ import React from "react";
 import { useAuth0 } from "@developertown/oidc-provider";
 
 function App() {
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
+  const {
+    isLoading,
+    isAuthenticated,
+    error,
+    user,
+    loginWithRedirect,
+    logout,
+  } = useAuth0();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -68,11 +75,39 @@ function App() {
   if (isAuthenticated) {
     return (
       <div>
-        Hello {user.name} <button onClick={() => logout()}>Log out</button>
+        Hello {user.name}{" "}
+        <button
+          onClick={() => {
+            // optionally pass a returnTo url
+            // https://auth0.com/docs/authenticate/login/logout/redirect-users-after-logout
+            logout({
+              extraQueryParams: {
+                returnTo: `${window.location.origin}/logout/callback`,
+              },
+            });
+            // or simply logut to return to the configured redirectUri
+            //logout()
+          }}
+        >
+          Log out
+        </button>
       </div>
     );
   } else {
-    return <button onClick={loginWithRedirect}>Log in</button>;
+    return (
+      <button
+        onClick={() => {
+          //optionally pass a returnTo url
+          loginWithRedirect({
+            state: { returnTo: `${window.location.href}/login/callback` },
+          });
+          // or take the defaults
+          //loginWithRedirect()
+        }}
+      >
+        Log in
+      </button>
+    );
   }
 }
 
@@ -99,7 +134,7 @@ ReactDOM.render(
   >
     <App />
   </CognitoProvider>,
-  document.getElementById("app"),
+  document.getElementById("app")
 );
 ```
 
@@ -111,7 +146,14 @@ import React from "react";
 import { useCongito } from "@developertown/oidc-provider";
 
 function App() {
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useCongito();
+  const {
+    isLoading,
+    isAuthenticated,
+    error,
+    user,
+    loginWithRedirect,
+    logout,
+  } = useCongito();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -156,7 +198,7 @@ ReactDOM.render(
   >
     <App />
   </AzureProvider>,
-  document.getElementById("app"),
+  document.getElementById("app")
 );
 ```
 
@@ -168,7 +210,14 @@ import React from "react";
 import { useAzure } from "@developertown/oidc-provider";
 
 function App() {
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAzure();
+  const {
+    isLoading,
+    isAuthenticated,
+    error,
+    user,
+    loginWithRedirect,
+    logout,
+  } = useAzure();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -220,7 +269,7 @@ ReactDOM.render(
   >
     <App />
   </OIDCProvider>,
-  document.getElementById("app"),
+  document.getElementById("app")
 );
 ```
 
@@ -232,7 +281,14 @@ import React from "react";
 import { useAuth } from "@developertown/oidc-provider";
 
 function App() {
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth();
+  const {
+    isLoading,
+    isAuthenticated,
+    error,
+    user,
+    loginWithRedirect,
+    logout,
+  } = useAuth();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -266,8 +322,16 @@ import { withAuthenticationRequired } from "@developertown/oidc-provider";
 const PrivateRoute = () => <div>Private</div>;
 
 export default withAuthenticationRequired(PrivateRoute, {
-  // Show a message while the user waits to be redirected to the login page.
+  // optionally show a message while the authentication provider initializes.
+  onInitializing: () => <div>Checking for existing login...</div>,
+  // optionally show a message while the user waits to be redirected to the login page.
   onRedirecting: () => <div>Redirecting you to the login page...</div>,
+  // optionally show a message login fails.
+  onError: (error: Error) => <div>{error.message}</div>,
+  // optionally pass parameters to `loginWithRedirect` for example a returnTo location
+  loginWithRedirectParams: () => ({
+    state: { returnTo: window.location.href },
+  }),
 });
 ```
 
@@ -321,7 +385,10 @@ export default Posts;
 // src/index.js
 import React from "react";
 import ReactDOM from "react-dom";
-import { Auth0Provider as AuthenticationProvider, AppState } from "@developertown/oidc-provider";
+import {
+  Auth0Provider as AuthenticationProvider,
+  AppState,
+} from "@developertown/oidc-provider";
 import App from "./App";
 
 ReactDOM.render(
@@ -350,12 +417,16 @@ ReactDOM.render(
     onRedirectCallback={(appState?: AppState) => {
       // Perform action after redirecting from the authentication provider
       // NOTE: if no onRedirectCallback is provided the default behavior is
-      window.history.replaceState({}, document.title, appState?.returnTo || window.location.pathname);
+      window.history.replaceState(
+        {},
+        document.title,
+        appState?.returnTo || window.location.pathname
+      );
     }}
   >
     <App />
   </AuthenticationProvider>,
-  document.getElementById("app"),
+  document.getElementById("app")
 );
 ```
 

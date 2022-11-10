@@ -1,10 +1,12 @@
-import React, { ComponentType, FC, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "./oidc-provider";
 
+const defaultLoginWithRedirectParams = () => undefined;
 const defaultOnRedirecting = (): JSX.Element => <></>;
 const defaultOnError = (error: Error): JSX.Element => <>{error.message}</>;
 
-export interface WithAuthenticationRequiredOptions {
+interface WithAuthenticationRequiredOptions {
+  loginWithRedirectParams?: () => any;
   onInitializing?: () => JSX.Element;
   onRedirecting?: () => JSX.Element;
   onError?: (error: Error) => JSX.Element;
@@ -12,14 +14,15 @@ export interface WithAuthenticationRequiredOptions {
 
 const withAuthenticationRequired =
   <P extends Record<string, unknown>>(
-    Component: ComponentType<P>,
+    Component: React.ComponentType<P>,
     options: WithAuthenticationRequiredOptions = {},
-  ): FC<P> =>
+  ): React.FC<P> =>
   (props: P): JSX.Element => {
     const { isAuthenticated, isLoading: isInitializing, error, loginWithRedirect } = useAuth();
     const [isLoading, setLoading] = useState(false);
     const hasError = Boolean(error);
     const {
+      loginWithRedirectParams = defaultLoginWithRedirectParams,
       onInitializing = defaultOnRedirecting,
       onRedirecting = defaultOnRedirecting,
       onError = defaultOnError,
@@ -30,8 +33,8 @@ const withAuthenticationRequired =
         return;
       }
       setLoading(true);
-      loginWithRedirect().finally(() => setLoading(false));
-    }, [isInitializing, isLoading, isAuthenticated, hasError, loginWithRedirect]);
+      loginWithRedirect(loginWithRedirectParams()).finally(() => setLoading(false));
+    }, [isInitializing, isLoading, isAuthenticated, hasError, loginWithRedirect, loginWithRedirectParams]);
 
     if (isInitializing) {
       return onInitializing();
