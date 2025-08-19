@@ -31,6 +31,10 @@
     "start": {
       "cache": false
     },
+    "preview": {
+      "cache": false,
+      "dependsOn": ["build"]
+    },
     "clean": {
       "cache": false
     },
