@@ -5,7 +5,7 @@ const defaultLoginWithRedirectParams = () => undefined;
 const defaultOnRedirecting = (): JSX.Element => <></>;
 const defaultOnError = (error: Error): JSX.Element => <>{error.message}</>;
 
-interface WithAuthenticationRequiredOptions {
+export interface WithAuthenticationRequiredOptions {
   loginWithRedirectParams?: () => any;
   onInitializing?: () => JSX.Element;
   onRedirecting?: () => JSX.Element;
