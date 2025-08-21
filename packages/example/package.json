@@ -8,7 +8,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "start": "vite",
-    "test": "vitest"
+    "test": "vitest --passWithNoTests"
   },
   "dependencies": {
     "@developertown/oidc-provider": "*",
