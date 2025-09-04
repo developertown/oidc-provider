@@ -3,7 +3,7 @@ import {
   AuthenticationProvider,
   useAccessToken,
   useAuth,
-  withAuthenticationRequired,
+  withAuthenticationRequired
 } from "./authentication-provider";
 import logo from "./logo.svg";
 
@@ -41,7 +41,7 @@ const App = () => {
 const RequiredAuthApp = withAuthenticationRequired(App, {
   onInitializing: () => <>Initializing Auth</>,
   onRedirecting: () => <>Redirecting to Login</>,
-  onError: (error: Error) => <>{error.message}</>,
+  onError: (error: Error) => <>{error.message}</>
 });
 
 const AuthenticatedApp = () => {

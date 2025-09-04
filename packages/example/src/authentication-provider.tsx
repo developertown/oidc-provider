@@ -15,16 +15,16 @@ import {
   // OIDCProviderProps as OpenIDAuthenticationProviderProps,
   // useAuth,
   Token,
-  withAuthenticationRequired,
+  withAuthenticationRequired
 } from "@developertown/oidc-provider";
 import React, { createContext, useCallback, useContext, useState } from "react";
 
 const AccessTokenContext = createContext<Token | undefined>(undefined);
 
-const AccessTokenProvider: React.FC<{ accessToken?: Token, children?: React.ReactNode }> = ({
-  accessToken,
-  children,
-}) => {
+const AccessTokenProvider: React.FC<{
+  accessToken?: Token;
+  children?: React.ReactNode;
+}> = ({ accessToken, children }) => {
   const { isAuthenticated } = useAuth();
 
   if (isAuthenticated && !accessToken) {
@@ -37,7 +37,9 @@ const AccessTokenProvider: React.FC<{ accessToken?: Token, children?: React.Reac
   );
 };
 
-export type AuthenticationProviderProps = OpenIDAuthenticationProviderProps & {children?: React.ReactNode};
+export type AuthenticationProviderProps = OpenIDAuthenticationProviderProps & {
+  children?: React.ReactNode;
+};
 
 export const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({
   children,

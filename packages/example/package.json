@@ -6,6 +6,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "yarn run lint --fix",
     "preview": "vite preview",
     "start": "vite",
     "test": "vitest"
