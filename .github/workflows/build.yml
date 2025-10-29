@@ -1,32 +1,39 @@
 on:
   pull_request:
-    branches: [master, main]
+    branches: [main]
   workflow_dispatch:
+
+env:
+  NODE_VERSION: "22.x"
+  RUBY_VERSION: "3.0"
+  LICENSE_FINDER_VERSION: "7.1.0"
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v5
 
       - name: Install Node.js
-        uses: actions/setup-node@v2.4.0
+        uses: actions/setup-node@v6
         with:
-          node-version: "14.x"
+          node-version: "${{ env.NODE_VERSION }}"
 
       - name: Install Yarn
         run: npm install --global yarn
         shell: bash
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.81.0
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "2.4"
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: false
 
-      - name: Install License Checker
-        run: gem install license_finder
+      - name: Install License Finder
         shell: bash
+        run: gem install license_finder:${{ env.LICENSE_FINDER_VERSION }} --no-document
 
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
@@ -53,7 +60,7 @@ jobs:
         shell: bash
 
       - name: Publish Build Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v5
         with:
           name: dist
           path: ./packages/oidc-provider/dist

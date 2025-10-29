@@ -1,48 +1,57 @@
+import { useState } from "react";
 import "./App.css";
+import reactLogo from "./assets/react.svg";
 import {
   AuthenticationProvider,
   useAccessToken,
   useAuth,
-  withAuthenticationRequired,
 } from "./authentication-provider";
-import logo from "./logo.svg";
+import viteLogo from "/vite.svg";
 
-const App = () => {
+function App() {
   const { user, loginWithRedirect, logout, isAuthenticated } = useAuth();
   const token = useAccessToken();
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        {isAuthenticated ? (
-          <>
-            <button onClick={() => logout()}>{`Log out ${user?.name}?`}</button>
-            <code className="App-token">{JSON.stringify(token, null, 2)}</code>
-          </>
-        ) : (
-          <button onClick={() => loginWithRedirect()}>Log In</button>
-        )}
-      </header>
-    </div>
-  );
-};
+  const [count, setCount] = useState(0);
 
-const RequiredAuthApp = withAuthenticationRequired(App, {
-  onInitializing: () => <>Initializing Auth</>,
-  onRedirecting: () => <>Redirecting to Login</>,
-  onError: (error: Error) => <>{error.message}</>,
-});
+  return (
+    <>
+      <div>
+        <a href="https://vite.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.tsx</code> and save to test HMR
+        </p>
+      </div>
+      <p className="read-the-docs">
+        Click on the Vite and React logos to learn more
+      </p>
+      {isAuthenticated ? (
+        <>
+          <button onClick={() => logout()}>{`Log out ${user?.name}?`}</button>
+          <code className="App-token">{JSON.stringify(token, null, 2)}</code>
+        </>
+      ) : (
+        <button onClick={() => loginWithRedirect()}>Log In</button>
+      )}
+    </>
+  );
+}
+
+// const RequiredAuthApp = withAuthenticationRequired(App, {
+//   onInitializing: () => <>Initializing Auth</>,
+//   onRedirecting: () => <>Redirecting to Login</>,
+//   onError: (error: Error) => <>{error.message}</>,
+// });
 
 const AuthenticatedApp = () => {
   return (
@@ -64,17 +73,17 @@ const AuthenticatedApp = () => {
       useRefreshTokens
       redirectUri={window.location.origin}
       onAccessTokenExpiring={() => console.warn("user session expiring")}
-      onAccessTokenChanged={(token: any) =>
+      onAccessTokenChanged={(token: unknown) =>
         console.info("user session token", token)
       }
-      onAccessTokenRefreshError={(error: any) =>
+      onAccessTokenRefreshError={(error: unknown) =>
         console.error("failed to refresh token", error)
       }
       onAccessTokenExpired={() => console.error("user session expired")}
     >
       {
-        //<App />
-        <RequiredAuthApp />
+        <App />
+        // <RequiredAuthApp />
       }
     </AuthenticationProvider>
   );
