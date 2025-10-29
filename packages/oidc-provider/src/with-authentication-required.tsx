@@ -6,6 +6,7 @@ const defaultOnRedirecting = (): JSX.Element => <></>;
 const defaultOnError = (error: Error): JSX.Element => <>{error.message}</>;
 
 export interface WithAuthenticationRequiredOptions {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loginWithRedirectParams?: () => any;
   onInitializing?: () => JSX.Element;
   onRedirecting?: () => JSX.Element;

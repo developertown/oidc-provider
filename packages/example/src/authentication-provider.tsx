@@ -1,21 +1,21 @@
 import {
   // CognitoProvider as OpenIDAuthenticationProvider,
-  // CognitoProviderProps as OpenIDAuthenticationProvider,
   // useCongito as useAuth,
-  //
   Auth0Provider as OpenIDAuthenticationProvider,
-  Auth0ProviderProps as OpenIDAuthenticationProviderProps,
   useAuth0 as useAuth,
-  //
   // AzureProvider as OpenIDAuthenticationProvider,
-  // AzureProviderProps as OpenIDAuthenticationProviderProps,
   // useAzure as useAuth,
-  //
   // OIDCProvider as OpenIDAuthenticationProvider,
-  // OIDCProviderProps as OpenIDAuthenticationProviderProps,
   // useAuth,
-  Token,
   withAuthenticationRequired,
+} from "@developertown/oidc-provider";
+
+import type {
+  // CognitoProviderProps as OpenIDAuthenticationProviderProps,
+  Auth0ProviderProps as OpenIDAuthenticationProviderProps,
+  // AzureProviderProps as OpenIDAuthenticationProviderProps,
+  // OIDCProviderProps as OpenIDAuthenticationProviderProps,
+  Token,
 } from "@developertown/oidc-provider";
 import React, { createContext, useCallback, useContext, useState } from "react";
 

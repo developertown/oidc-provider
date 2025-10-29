@@ -118,3 +118,24 @@
     :why:
     :versions: []
     :when: 2021-03-11 17:21:53.024938000 Z
+- - :permit
+  - BlueOak-1.0.0
+  - :who:
+    :why: "Permissive: This license gives everyone as much permission to work with this software as possible, while protecting contributors from liability"
+    :versions: []
+    :when: 2025-10-29 20:54:58.870594000 Z
+- - :permit
+  - Mozilla Public License 2.0
+  - :who:
+    :why: "Permissive"
+    :when: 2025-10-29 20:54:58.870594000 Z
+- - :permit
+  - MIT-0
+  - :who:
+    :why: "Permissive"
+    :when: 2025-10-29 20:54:58.870594000 Z
+- - :permit
+  - Python-2.0
+  - :who:
+    :why: "Permissive"
+    :when: 2025-10-29 20:54:58.870594000 Z
