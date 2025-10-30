@@ -10,6 +10,7 @@
     "preview": "turbo run preview",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
+    "test:watch": "turbo run test:watch",
     "clean": "turbo run clean && rm -rf node_modules --continue",
     "lint": "turbo run lint --parallel",
     "lint:fix": "turbo run lint:fix --parallel",
