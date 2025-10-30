@@ -10,6 +10,15 @@ import * as utils from "../utils";
 vi.mock("oidc-client-ts", () => ({
   UserManager: vi.fn(),
   WebStorageStateStore: vi.fn(),
+  Log: {
+    setLogger: vi.fn(),
+    setLevel: vi.fn(),
+    NONE: 0,
+    ERROR: 1,
+    WARN: 2,
+    INFO: 3,
+    DEBUG: 4,
+  },
   InMemoryWebStorage: class InMemoryWebStorage {
     private storage: Map<string, string> = new Map();
     get length() {
@@ -884,6 +893,178 @@ describe("OIDCProvider", () => {
         refreshToken: "mock-refresh-token",
         scope: "",
         expiresAt: 0,
+      });
+    });
+  });
+
+  describe("Logger Configuration", () => {
+    it("should call Log.setLogger when logger prop is provided", async () => {
+      const { Log } = await import("oidc-client-ts");
+      const mockLogger = {
+        debug: vi.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      };
+
+      render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          logger={mockLogger}
+        >
+          <div>Test</div>
+        </OIDCProvider>,
+      );
+
+      await waitFor(() => {
+        expect(Log.setLogger).toHaveBeenCalledWith(mockLogger);
+      });
+    });
+
+    it("should not call Log.setLogger when logger prop is not provided", async () => {
+      const { Log } = await import("oidc-client-ts");
+      vi.clearAllMocks();
+
+      render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+        >
+          <div>Test</div>
+        </OIDCProvider>,
+      );
+
+      await waitFor(() => {
+        expect(mockUserManager.getUser).toHaveBeenCalled();
+      });
+
+      expect(Log.setLogger).not.toHaveBeenCalled();
+    });
+
+    it("should call Log.setLevel when logLevel prop is provided", async () => {
+      const { Log } = await import("oidc-client-ts");
+
+      render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          logLevel={Log.DEBUG}
+        >
+          <div>Test</div>
+        </OIDCProvider>,
+      );
+
+      await waitFor(() => {
+        expect(Log.setLevel).toHaveBeenCalledWith(Log.DEBUG);
+      });
+    });
+
+    it("should call Log.setLevel with Log.INFO", async () => {
+      const { Log } = await import("oidc-client-ts");
+
+      render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          logLevel={Log.INFO}
+        >
+          <div>Test</div>
+        </OIDCProvider>,
+      );
+
+      await waitFor(() => {
+        expect(Log.setLevel).toHaveBeenCalledWith(Log.INFO);
+      });
+    });
+
+    it("should not call Log.setLevel when logLevel prop is not provided", async () => {
+      const { Log } = await import("oidc-client-ts");
+      vi.clearAllMocks();
+
+      render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+        >
+          <div>Test</div>
+        </OIDCProvider>,
+      );
+
+      await waitFor(() => {
+        expect(mockUserManager.getUser).toHaveBeenCalled();
+      });
+
+      expect(Log.setLevel).not.toHaveBeenCalled();
+    });
+
+    it("should call both Log.setLogger and Log.setLevel when both props are provided", async () => {
+      const { Log } = await import("oidc-client-ts");
+      const mockLogger = {
+        debug: vi.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      };
+
+      render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          logger={mockLogger}
+          logLevel={Log.WARN}
+        >
+          <div>Test</div>
+        </OIDCProvider>,
+      );
+
+      await waitFor(() => {
+        expect(Log.setLogger).toHaveBeenCalledWith(mockLogger);
+        expect(Log.setLevel).toHaveBeenCalledWith(Log.WARN);
+      });
+    });
+
+    it("should handle Log.NONE level", async () => {
+      const { Log } = await import("oidc-client-ts");
+
+      render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          logLevel={Log.NONE}
+        >
+          <div>Test</div>
+        </OIDCProvider>,
+      );
+
+      await waitFor(() => {
+        expect(Log.setLevel).toHaveBeenCalledWith(Log.NONE);
+      });
+    });
+
+    it("should handle Log.ERROR level", async () => {
+      const { Log } = await import("oidc-client-ts");
+
+      render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          logLevel={Log.ERROR}
+        >
+          <div>Test</div>
+        </OIDCProvider>,
+      );
+
+      await waitFor(() => {
+        expect(Log.setLevel).toHaveBeenCalledWith(Log.ERROR);
       });
     });
   });

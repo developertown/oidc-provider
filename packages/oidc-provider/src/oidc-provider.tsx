@@ -1,12 +1,13 @@
 import type {
   AccessTokenCallback,
+  ILogger,
   SigninRedirectArgs,
   SigninSilentArgs,
   SignoutRedirectArgs,
   SilentRenewErrorCallback,
   UserLoadedCallback,
 } from "oidc-client-ts";
-import { UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client-ts";
+import { Log, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client-ts";
 import React, { createContext, useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { error, initialize } from "./actions";
 import reducer from "./reducer";
@@ -60,6 +61,8 @@ export type Props = Omit<UserManagerSettings, "userStore"> &
   Events & {
     children?: React.ReactNode;
     tokenStorage?: StorageType;
+    logger?: ILogger;
+    logLevel?: Log;
   };
 
 export const OIDCProvider: React.FC<Props> = ({
@@ -70,6 +73,8 @@ export const OIDCProvider: React.FC<Props> = ({
   onAccessTokenRefreshError,
   onRedirectCallback = defaultOnRedirectCallback,
   tokenStorage = StorageTypes.SessionStorage,
+  logger,
+  logLevel,
   ...props
 }) => {
   const [client] = useState(
@@ -115,6 +120,18 @@ export const OIDCProvider: React.FC<Props> = ({
   const logout = useCallback((opts?: LogoutOptions) => client.signoutRedirect(opts), [client]);
 
   const didInitialize = useRef(false);
+
+  useEffect(() => {
+    if (logger) {
+      Log.setLogger(logger);
+    }
+  }, [logger]);
+
+  useEffect(() => {
+    if (logLevel !== undefined) {
+      Log.setLevel(logLevel);
+    }
+  }, [logLevel]);
 
   useEffect(() => {
     if (didInitialize.current) {
