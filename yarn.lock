@@ -3287,11 +3287,6 @@ cross-spawn@^7.0.6:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-crypto-js@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.2.0.tgz#4d931639ecdfd12ff80e8186dba6af2c2e856631"
-  integrity sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==
-
 css-tree@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-3.1.0.tgz#7aabc035f4e66b5c86f54570d55e05b1346eb0fd"
@@ -5765,10 +5760,10 @@ jsprim@^1.2.2:
     array-includes "^3.1.5"
     object.assign "^4.1.2"
 
-jwt-decode@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
-  integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
+jwt-decode@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-4.0.0.tgz#2270352425fd413785b2faf11f6e755c5151bd4b"
+  integrity sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==
 
 keyv@^4.5.4:
   version "4.5.4"
@@ -6356,13 +6351,12 @@ object.values@^1.1.5:
     define-properties "^1.1.3"
     es-abstract "^1.19.1"
 
-oidc-client-ts@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/oidc-client-ts/-/oidc-client-ts-2.4.1.tgz#5441cb90188bc07580bcab2b49ed2fd1fe1889d0"
-  integrity sha512-IxlGMsbkZPsHJGCliWT3LxjUcYzmiN21656n/Zt2jDncZlBFc//cd8WqFF0Lt681UT3AImM57E6d4N53ziTCYA==
+oidc-client-ts@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/oidc-client-ts/-/oidc-client-ts-3.3.0.tgz#98a12e643b930825fb141634974e139d804ef972"
+  integrity sha512-t13S540ZwFOEZKLYHJwSfITugupW4uYLwuQSSXyKH/wHwZ+7FvgHE7gnNJh1YQIZ1Yd1hKSRjqeXGSUtS0r9JA==
   dependencies:
-    crypto-js "^4.2.0"
-    jwt-decode "^3.1.2"
+    jwt-decode "^4.0.0"
 
 once@^1.3.0, once@^1.3.1, once@^1.4.0:
   version "1.4.0"
