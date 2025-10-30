@@ -9,6 +9,15 @@ import * as utils from "../utils";
 vi.mock("oidc-client-ts", () => ({
   UserManager: vi.fn(),
   WebStorageStateStore: vi.fn(),
+  Log: {
+    setLogger: vi.fn(),
+    setLevel: vi.fn(),
+    NONE: 0,
+    ERROR: 1,
+    WARN: 2,
+    INFO: 3,
+    DEBUG: 4,
+  },
   InMemoryWebStorage: class InMemoryWebStorage {
     private readonly storage: Map<string, string> = new Map();
     get length() {
@@ -614,6 +623,54 @@ describe("AzureProvider", () => {
       await waitFor(() => {
         expect(screen.getByTestId("error")).toHaveTextContent("Authentication failed");
         expect(screen.getByTestId("loading")).toHaveTextContent("false");
+      });
+    });
+  });
+
+  describe("Logger Configuration", () => {
+    it("should pass logger prop to OIDCProvider", async () => {
+      const { Log } = await import("oidc-client-ts");
+      const mockLogger = {
+        debug: vi.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      };
+
+      render(
+        <AzureProvider
+          domain="test-tenant.b2clogin.com"
+          clientId="test-client-id"
+          redirectUri="https://example.com/callback"
+          policy="B2C_1_signin"
+          logger={mockLogger}
+        >
+          <div>Test</div>
+        </AzureProvider>,
+      );
+
+      await waitFor(() => {
+        expect(Log.setLogger).toHaveBeenCalledWith(mockLogger);
+      });
+    });
+
+    it("should pass logLevel prop to OIDCProvider", async () => {
+      const { Log } = await import("oidc-client-ts");
+
+      render(
+        <AzureProvider
+          domain="test-tenant.b2clogin.com"
+          clientId="test-client-id"
+          redirectUri="https://example.com/callback"
+          policy="B2C_1_signin"
+          logLevel={Log.WARN}
+        >
+          <div>Test</div>
+        </AzureProvider>,
+      );
+
+      await waitFor(() => {
+        expect(Log.setLevel).toHaveBeenCalledWith(Log.WARN);
       });
     });
   });

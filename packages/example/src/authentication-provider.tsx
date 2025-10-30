@@ -1,4 +1,5 @@
 import {
+  Log,
   // CognitoProvider as OpenIDAuthenticationProvider,
   // useCongito as useAuth,
   Auth0Provider as OpenIDAuthenticationProvider,
@@ -59,6 +60,8 @@ export const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({
   return (
     <OpenIDAuthenticationProvider
       {...OpenIDAuthenticationProviderProps}
+      logger={console}
+      logLevel={Log.DEBUG}
       onAccessTokenChanged={handleAccessTokenChange}
     >
       <AccessTokenProvider accessToken={accessToken}>
