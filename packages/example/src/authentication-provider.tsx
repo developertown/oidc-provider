@@ -41,6 +41,7 @@ export type AuthenticationProviderProps = OpenIDAuthenticationProviderProps & {c
 
 export const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({
   children,
+  onAccessTokenChanged,
   ...OpenIDAuthenticationProviderProps
 }) => {
   const [accessToken, setAccessToken] = useState<Token | undefined>(undefined);
@@ -48,8 +49,11 @@ export const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({
   const handleAccessTokenChange = useCallback(
     (token: Token) => {
       setAccessToken(token);
+      if (onAccessTokenChanged) {
+        onAccessTokenChanged(token);
+      }
     },
-    [setAccessToken]
+    [setAccessToken, onAccessTokenChanged]
   );
 
   return (
