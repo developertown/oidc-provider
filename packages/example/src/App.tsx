@@ -73,18 +73,16 @@ const AuthenticatedApp = () => {
       useRefreshTokens
       redirectUri={window.location.origin}
       onAccessTokenExpiring={() => console.warn("user session expiring")}
-      onAccessTokenChanged={(token: unknown) =>
+      onAccessTokenChanged={(token) =>
         console.info("user session token", token)
       }
-      onAccessTokenRefreshError={(error: unknown) =>
+      onAccessTokenRefreshError={(error) =>
         console.error("failed to refresh token", error)
       }
       onAccessTokenExpired={() => console.error("user session expired")}
     >
-      {
-        <App />
-        // <RequiredAuthApp />
-      }
+      <App />
+      {/* <RequiredAuthApp /> */}
     </AuthenticationProvider>
   );
 };
