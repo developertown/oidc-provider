@@ -1,14 +1,21 @@
 {
   "name": "@developertown/oidc-provider",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "oidc-provider",
   "repository": "",
   "license": "MIT",
   "author": "",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/oidc-provider.esm.js",
   "module": "dist/oidc-provider.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/oidc-provider.esm.js",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
