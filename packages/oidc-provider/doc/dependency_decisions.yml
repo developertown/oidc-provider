@@ -139,3 +139,9 @@
   - :who:
     :why: "Permissive"
     :when: 2025-10-29 20:54:58.870594000 Z
+- - :approve
+  - rollup-plugin-dts
+  - :who:
+    :why: "Required for bundling TypeScript declarations; tooling-only LGPL dependency accepted"
+    :versions: []
+    :when: 2026-01-22 00:00:00.000000000 Z
