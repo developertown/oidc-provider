@@ -1,6 +1,6 @@
 import React from "react";
 import { OIDCProvider, useAuth as useAzure } from "./oidc-provider";
-import { AuthProviderOptions } from "./auth-provider";
+import type { AuthProviderOptions } from "./auth-provider";
 import { getUniqueScopes } from "./utils";
 
 export type AzureProviderOptions = AuthProviderOptions & {

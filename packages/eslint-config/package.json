@@ -1,0 +1,27 @@
+{
+  "name": "@developertown/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./base": "./base.js",
+    "./react-library": "./react-library.js",
+    "./react-app": "./react-app.js"
+  },
+  "files": [
+    "base.js",
+    "react-library.js",
+    "react-app.js"
+  ],
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.5",
+    "globals": "^17.12.0",
+    "typescript-eslint": "^8.69.0"
+  },
+  "peerDependencies": {
+    "eslint": "^10.0.0"
+  }
+}

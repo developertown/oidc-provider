@@ -3,7 +3,7 @@ export { Auth0Provider, useAuth0 } from "./auth0-provider";
 export type { Auth0ProviderOptions as Auth0ProviderProps } from "./auth0-provider";
 export { AzureProvider, useAzure } from "./azure-provider";
 export type { AzureProviderOptions as AzureProviderProps } from "./azure-provider";
-export { CognitoProvider, useCongito } from "./cognito-provider";
+export { CognitoProvider, useCognito, useCongito } from "./cognito-provider";
 export type { CognitoProviderOptions as CognitoProviderProps } from "./cognito-provider";
 export { OIDCProvider, useAuth, useAuthClient } from "./oidc-provider";
 export type { AuthProviderState, Props as OIDCProviderProps, Token } from "./oidc-provider";

@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { User, UserManager, UserProfile } from "oidc-client-ts";
+import type { User, UserProfile } from "oidc-client-ts";
+import { UserManager } from "oidc-client-ts";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Auth0Provider, useAuth0 } from "../auth0-provider";

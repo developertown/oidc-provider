@@ -1,6 +1,7 @@
 import { InMemoryWebStorage } from "oidc-client-ts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import tokenStorageForType, { StorageTypes, TokenStorage } from "../token-storage";
+import type { TokenStorage } from "../token-storage";
+import tokenStorageForType, { StorageTypes } from "../token-storage";
 
 describe("tokenStorageForType", () => {
   beforeEach(() => {

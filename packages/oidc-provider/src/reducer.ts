@@ -1,6 +1,6 @@
 import { reducerWithoutInitialState } from "typescript-fsa-reducers";
 import { initialize, error } from "./actions";
-import { AuthState } from "./state";
+import type { AuthState } from "./state";
 
 const reducer = reducerWithoutInitialState<AuthState>()
   .case(initialize, (state, { isAuthenticated, user }) => ({

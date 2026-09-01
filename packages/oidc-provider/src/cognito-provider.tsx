@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
-import { OIDCProvider, useAuth, useAuthClient, LogoutOptions, AuthProviderState } from "./oidc-provider";
-import { AuthProviderOptions } from "./auth-provider";
+import { OIDCProvider, useAuth, useAuthClient } from "./oidc-provider";
+import type { LogoutOptions, AuthProviderState } from "./oidc-provider";
+import type { AuthProviderOptions } from "./auth-provider";
 import { getUniqueScopes } from "./utils";
 
 export type CognitoProviderOptions = AuthProviderOptions;
@@ -38,7 +39,7 @@ const CognitoProvider: React.FC<CognitoProviderOptions> = ({
   </OIDCProvider>
 );
 
-const useCongito = (): AuthProviderState => {
+const useCognito = (): AuthProviderState => {
   const client = useAuthClient();
   const state = useAuth();
   return useMemo(
@@ -59,4 +60,10 @@ const useCongito = (): AuthProviderState => {
   );
 };
 
-export { CognitoProvider, useCongito };
+/**
+ * @deprecated Misspelled alias of {@link useCognito}. Use `useCognito` instead; this will be
+ * removed in the next major release.
+ */
+const useCongito = useCognito;
+
+export { CognitoProvider, useCognito, useCongito };

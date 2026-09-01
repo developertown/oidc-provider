@@ -1,7 +1,7 @@
 import {
   Log,
   // CognitoProvider as OpenIDAuthenticationProvider,
-  // useCongito as useAuth,
+  // useCognito as useAuth,
   Auth0Provider as OpenIDAuthenticationProvider,
   useAuth0 as useAuth,
   // AzureProvider as OpenIDAuthenticationProvider,
@@ -22,7 +22,7 @@ import React, { createContext, useCallback, useContext, useState } from "react";
 
 const AccessTokenContext = createContext<Token | undefined>(undefined);
 
-const AccessTokenProvider: React.FC<{ accessToken?: Token, children?: React.ReactNode }> = ({
+const AccessTokenProvider: React.FC<{ accessToken?: Token; children?: React.ReactNode }> = ({
   accessToken,
   children,
 }) => {
@@ -31,14 +31,10 @@ const AccessTokenProvider: React.FC<{ accessToken?: Token, children?: React.Reac
   if (isAuthenticated && !accessToken) {
     return null;
   }
-  return (
-    <AccessTokenContext.Provider value={accessToken}>
-      {children}
-    </AccessTokenContext.Provider>
-  );
+  return <AccessTokenContext.Provider value={accessToken}>{children}</AccessTokenContext.Provider>;
 };
 
-export type AuthenticationProviderProps = OpenIDAuthenticationProviderProps & {children?: React.ReactNode};
+export type AuthenticationProviderProps = OpenIDAuthenticationProviderProps & { children?: React.ReactNode };
 
 export const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({
   children,
@@ -54,7 +50,7 @@ export const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({
         onAccessTokenChanged(token);
       }
     },
-    [setAccessToken, onAccessTokenChanged]
+    [setAccessToken, onAccessTokenChanged],
   );
 
   return (
@@ -64,9 +60,7 @@ export const AuthenticationProvider: React.FC<AuthenticationProviderProps> = ({
       logLevel={Log.DEBUG}
       onAccessTokenChanged={handleAccessTokenChange}
     >
-      <AccessTokenProvider accessToken={accessToken}>
-        {children}
-      </AccessTokenProvider>
+      <AccessTokenProvider accessToken={accessToken}>{children}</AccessTokenProvider>
     </OpenIDAuthenticationProvider>
   );
 };

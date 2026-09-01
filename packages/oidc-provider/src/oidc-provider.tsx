@@ -7,12 +7,15 @@ import type {
   SilentRenewErrorCallback,
   UserLoadedCallback,
 } from "oidc-client-ts";
-import { Log, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client-ts";
+import { Log, UserManager, WebStorageStateStore } from "oidc-client-ts";
+import type { UserManagerSettings } from "oidc-client-ts";
 import React, { createContext, useCallback, useContext, useEffect, useReducer, useRef, useState } from "react";
 import { error, initialize } from "./actions";
 import reducer from "./reducer";
-import { AuthState, initialState } from "./state";
-import tokenStorageForType, { StorageType, StorageTypes } from "./token-storage";
+import { initialState } from "./state";
+import type { AuthState } from "./state";
+import tokenStorageForType, { StorageTypes } from "./token-storage";
+import type { StorageType } from "./token-storage";
 import { hasAuthParams } from "./utils";
 
 export type AppState = {

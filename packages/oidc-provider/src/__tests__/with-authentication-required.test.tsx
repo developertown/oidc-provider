@@ -1,8 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { UserProfile } from "oidc-client-ts";
+import type { UserProfile } from "oidc-client-ts";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import withAuthenticationRequired, { WithAuthenticationRequiredOptions } from "../with-authentication-required";
+import type { WithAuthenticationRequiredOptions } from "../with-authentication-required";
+import withAuthenticationRequired from "../with-authentication-required";
 
 // Mock the useAuth hook
 vi.mock("../oidc-provider", () => ({

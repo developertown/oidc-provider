@@ -1,8 +1,9 @@
-import { UserProfile } from "oidc-client-ts";
+import type { UserProfile } from "oidc-client-ts";
 import { describe, expect, it } from "vitest";
 import { error, initialize } from "../actions";
 import reducer from "../reducer";
-import { AuthState, initialState } from "../state";
+import { initialState } from "../state";
+import type { AuthState } from "../state";
 
 describe("reducer", () => {
   describe("initialize action", () => {

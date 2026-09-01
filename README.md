@@ -44,7 +44,7 @@ ReactDOM.render(
   >
     <App />
   </Auth0Provider>,
-  document.getElementById("app")
+  document.getElementById("app"),
 );
 ```
 
@@ -56,14 +56,7 @@ import React from "react";
 import { useAuth0 } from "@developertown/oidc-provider";
 
 function App() {
-  const {
-    isLoading,
-    isAuthenticated,
-    error,
-    user,
-    loginWithRedirect,
-    logout,
-  } = useAuth0();
+  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -134,26 +127,19 @@ ReactDOM.render(
   >
     <App />
   </CognitoProvider>,
-  document.getElementById("app")
+  document.getElementById("app"),
 );
 ```
 
-Use the `useCongito` hook in your components to access authentication state (`isLoading`, `isAuthenticated` and `user`) and authentication methods (`loginWithRedirect` and `logout`):
+Use the `useCognito` hook in your components to access authentication state (`isLoading`, `isAuthenticated` and `user`) and authentication methods (`loginWithRedirect` and `logout`):
 
 ```jsx
 // src/App.js
 import React from "react";
-import { useCongito } from "@developertown/oidc-provider";
+import { useCognito } from "@developertown/oidc-provider";
 
 function App() {
-  const {
-    isLoading,
-    isAuthenticated,
-    error,
-    user,
-    loginWithRedirect,
-    logout,
-  } = useCongito();
+  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useCognito();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -198,7 +184,7 @@ ReactDOM.render(
   >
     <App />
   </AzureProvider>,
-  document.getElementById("app")
+  document.getElementById("app"),
 );
 ```
 
@@ -210,14 +196,7 @@ import React from "react";
 import { useAzure } from "@developertown/oidc-provider";
 
 function App() {
-  const {
-    isLoading,
-    isAuthenticated,
-    error,
-    user,
-    loginWithRedirect,
-    logout,
-  } = useAzure();
+  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAzure();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -269,7 +248,7 @@ ReactDOM.render(
   >
     <App />
   </OIDCProvider>,
-  document.getElementById("app")
+  document.getElementById("app"),
 );
 ```
 
@@ -281,14 +260,7 @@ import React from "react";
 import { useAuth } from "@developertown/oidc-provider";
 
 function App() {
-  const {
-    isLoading,
-    isAuthenticated,
-    error,
-    user,
-    loginWithRedirect,
-    logout,
-  } = useAuth();
+  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth();
 
   if (isLoading) {
     return <div>Loading...</div>;

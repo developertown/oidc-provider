@@ -7,10 +7,7 @@ export enum StorageTypes {
   MemoryStorage = "memoryStorage",
 }
 export type StorageType =
-  | StorageTypes.LocalStorage
-  | StorageTypes.SessionStorage
-  | StorageTypes.MemoryStorage
-  | TokenStorage;
+  StorageTypes.LocalStorage | StorageTypes.SessionStorage | StorageTypes.MemoryStorage | TokenStorage;
 
 const tokenStorageForType = (storageType: StorageType): TokenStorage => {
   switch (storageType) {
