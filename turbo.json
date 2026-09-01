@@ -6,6 +6,11 @@
       "outputs": ["dist/**", "build/**"],
       "cache": true
     },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "cache": true
+    },
     "e2e": {
       "outputs": ["test-results/**"],
       "dependsOn": [],

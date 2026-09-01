@@ -16,7 +16,8 @@
     "lint:fix": "turbo run lint:fix --parallel",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
-    "license:check": "turbo run license:check --parallel"
+    "license:check": "turbo run license:check --parallel",
+    "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
     "prettier": "3.9.6",

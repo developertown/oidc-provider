@@ -27,16 +27,17 @@
   "scripts": {
     "build": "bunchee",
     "clean": "rimraf ./dist",
+    "dev": "bunchee --watch",
     "license:add": "license_finder licenses add",
     "license:approve-package": "license_finder approvals add",
     "license:check": "license_finder",
     "license:permit": "license_finder permitted_licenses add",
     "lint": "eslint .",
     "lint:fix": "yarn run lint --fix",
-    "dev": "bunchee --watch",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "oidc-client-ts": "^3.5.0",
