@@ -38,7 +38,7 @@ const CognitoProvider: React.FC<CognitoProviderOptions> = ({
   </OIDCProvider>
 );
 
-const useCongito = (): AuthProviderState => {
+const useCognito = (): AuthProviderState => {
   const client = useAuthClient();
   const state = useAuth();
   return useMemo(
@@ -59,4 +59,10 @@ const useCongito = (): AuthProviderState => {
   );
 };
 
-export { CognitoProvider, useCongito };
+/**
+ * @deprecated Misspelled alias of {@link useCognito}. Use `useCognito` instead; this will be
+ * removed in the next major release.
+ */
+const useCongito = useCognito;
+
+export { CognitoProvider, useCognito, useCongito };

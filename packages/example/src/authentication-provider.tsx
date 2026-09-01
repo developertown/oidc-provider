@@ -1,7 +1,7 @@
 import {
   Log,
   // CognitoProvider as OpenIDAuthenticationProvider,
-  // useCongito as useAuth,
+  // useCognito as useAuth,
   Auth0Provider as OpenIDAuthenticationProvider,
   useAuth0 as useAuth,
   // AzureProvider as OpenIDAuthenticationProvider,

@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { User, UserManager, UserProfile } from "oidc-client-ts";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { CognitoProvider, useCongito } from "../cognito-provider";
+import { CognitoProvider, useCognito, useCongito } from "../cognito-provider";
 import * as utils from "../utils";
 
 // Mock oidc-client-ts
@@ -351,7 +351,7 @@ describe("CognitoProvider", () => {
   describe("useCognito hook", () => {
     it("should provide authentication state", async () => {
       const TestComponent = () => {
-        const { isAuthenticated, isLoading, user } = useCongito();
+        const { isAuthenticated, isLoading, user } = useCognito();
         return (
           <div>
             <div data-testid="authenticated">{isAuthenticated.toString()}</div>
@@ -380,7 +380,7 @@ describe("CognitoProvider", () => {
 
     it("should provide loginWithRedirect function", async () => {
       const TestComponent = () => {
-        const { loginWithRedirect } = useCongito();
+        const { loginWithRedirect } = useCognito();
         return (
           <button data-testid="login-btn" onClick={() => loginWithRedirect()}>
             Login
@@ -408,7 +408,7 @@ describe("CognitoProvider", () => {
 
     it("should add required parameters to logout extraQueryParams", async () => {
       const TestComponent = () => {
-        const { logout } = useCongito();
+        const { logout } = useCognito();
         return (
           <button data-testid="logout-btn" onClick={() => logout()}>
             Logout
@@ -444,7 +444,7 @@ describe("CognitoProvider", () => {
 
     it("should merge existing extraQueryParams in logout", async () => {
       const TestComponent = () => {
-        const { logout } = useCongito();
+        const { logout } = useCognito();
         return (
           <button
             data-testid="logout-btn"
@@ -488,7 +488,7 @@ describe("CognitoProvider", () => {
 
     it("should provide getAccessTokenSilently function", async () => {
       const TestComponent = () => {
-        const { getAccessTokenSilently } = useCongito();
+        const { getAccessTokenSilently } = useCognito();
         const [token, setToken] = React.useState<string | null>(null);
 
         React.useEffect(() => {
@@ -515,7 +515,7 @@ describe("CognitoProvider", () => {
 
     it("should provide user profile data", async () => {
       const TestComponent = () => {
-        const { user } = useCongito();
+        const { user } = useCognito();
         return (
           <div>
             <div data-testid="email">{user?.email}</div>
@@ -546,7 +546,7 @@ describe("CognitoProvider", () => {
       mockHasAuthParams.mockReturnValue(true);
 
       const TestComponent = () => {
-        const { isAuthenticated, user } = useCongito();
+        const { isAuthenticated, user } = useCognito();
         return (
           <div>
             <div data-testid="authenticated">{isAuthenticated.toString()}</div>
@@ -577,7 +577,7 @@ describe("CognitoProvider", () => {
       mockUserManager.getUser.mockRejectedValue(error);
 
       const TestComponent = () => {
-        const { error: authError, isLoading } = useCongito();
+        const { error: authError, isLoading } = useCognito();
         return (
           <div>
             <div data-testid="error">{authError?.message}</div>
@@ -686,6 +686,12 @@ describe("CognitoProvider", () => {
           }),
         );
       });
+    });
+  });
+
+  describe("useCongito (deprecated alias)", () => {
+    it("should be the same hook as useCognito", () => {
+      expect(useCongito).toBe(useCognito);
     });
   });
 });

@@ -138,12 +138,12 @@ ReactDOM.render(
 );
 ```
 
-Use the `useCongito` hook in your components to access authentication state (`isLoading`, `isAuthenticated` and `user`) and authentication methods (`loginWithRedirect` and `logout`):
+Use the `useCognito` hook in your components to access authentication state (`isLoading`, `isAuthenticated` and `user`) and authentication methods (`loginWithRedirect` and `logout`):
 
 ```jsx
 // src/App.js
 import React from "react";
-import { useCongito } from "@developertown/oidc-provider";
+import { useCognito } from "@developertown/oidc-provider";
 
 function App() {
   const {
@@ -153,7 +153,7 @@ function App() {
     user,
     loginWithRedirect,
     logout,
-  } = useCongito();
+  } = useCognito();
 
   if (isLoading) {
     return <div>Loading...</div>;
