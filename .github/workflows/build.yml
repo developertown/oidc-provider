@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: "24.x"
   RUBY_VERSION: "3.0"
   LICENSE_FINDER_VERSION: "7.1.0"
 
@@ -19,7 +18,8 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: "${{ env.NODE_VERSION }}"
+          node-version-file: .nvmrc
+          cache: yarn
 
       - name: Install Yarn
         run: npm install --global yarn
@@ -49,6 +49,10 @@ jobs:
 
       - name: Check format
         run: yarn format:check
+        shell: bash
+
+      - name: Typecheck
+        run: yarn typecheck
         shell: bash
 
       - name: Test Coverage
