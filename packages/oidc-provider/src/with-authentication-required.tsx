@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "./oidc-provider";
 
 const defaultLoginWithRedirectParams = () => undefined;
-const defaultOnRedirecting = (): JSX.Element => <></>;
-const defaultOnError = (error: Error): JSX.Element => <>{error.message}</>;
+const defaultOnRedirecting = (): React.JSX.Element => <></>;
+const defaultOnError = (error: Error): React.JSX.Element => <>{error.message}</>;
 
 export interface WithAuthenticationRequiredOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loginWithRedirectParams?: () => any;
-  onInitializing?: () => JSX.Element;
-  onRedirecting?: () => JSX.Element;
-  onError?: (error: Error) => JSX.Element;
+  onInitializing?: () => React.JSX.Element;
+  onRedirecting?: () => React.JSX.Element;
+  onError?: (error: Error) => React.JSX.Element;
 }
 
 const withAuthenticationRequired =
@@ -18,7 +18,7 @@ const withAuthenticationRequired =
     Component: React.ComponentType<P>,
     options: WithAuthenticationRequiredOptions = {},
   ): React.FC<P> =>
-  (props: P): JSX.Element => {
+  (props: P): React.JSX.Element => {
     const { isAuthenticated, isLoading: isInitializing, error, loginWithRedirect } = useAuth();
     const [isLoading, setLoading] = useState(false);
     const hasError = Boolean(error);

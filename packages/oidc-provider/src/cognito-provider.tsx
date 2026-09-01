@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
-import { OIDCProvider, useAuth, useAuthClient, LogoutOptions, AuthProviderState } from "./oidc-provider";
-import { AuthProviderOptions } from "./auth-provider";
+import { OIDCProvider, useAuth, useAuthClient } from "./oidc-provider";
+import type { LogoutOptions, AuthProviderState } from "./oidc-provider";
+import type { AuthProviderOptions } from "./auth-provider";
 import { getUniqueScopes } from "./utils";
 
 export type CognitoProviderOptions = AuthProviderOptions;

@@ -1,4 +1,4 @@
-import { UserProfile } from "oidc-client-ts";
+import type { UserProfile } from "oidc-client-ts";
 
 export interface AuthState {
   error?: Error;

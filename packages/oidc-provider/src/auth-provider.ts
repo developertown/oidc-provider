@@ -1,8 +1,8 @@
 import type { ILogger } from "oidc-client-ts";
-import { Log } from "oidc-client-ts";
-import React from "react";
-import { Events } from "./oidc-provider";
-import { StorageType } from "./token-storage";
+import type { Log } from "oidc-client-ts";
+import type React from "react";
+import type { Events } from "./oidc-provider";
+import type { StorageType } from "./token-storage";
 
 export type AuthProviderOptions = Events & {
   children?: React.ReactNode;
