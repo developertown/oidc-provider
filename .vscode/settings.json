@@ -9,12 +9,13 @@
   ],
   "[typescript]": {
     "editor.codeActionsOnSave": {
-      "source.organizeImports": true
+      "source.organizeImports": "explicit"
     }
   },
   "[typescriptreact]": {
     "editor.codeActionsOnSave": {
-      "source.organizeImports": true
+      "source.organizeImports": "explicit"
     }
-  }
+  },
+  "snyk.advanced.autoSelectOrganization": true
 }
