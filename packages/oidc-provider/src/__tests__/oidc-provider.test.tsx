@@ -241,6 +241,43 @@ describe("OIDCProvider", () => {
       });
     });
 
+    it("should surface an error response from the identity provider", async () => {
+      // A declined consent comes back as ?error=access_denied&state=..., which
+      // signinRedirectCallback rejects after clearing the pending sign-in state.
+      mockHasAuthParams.mockReturnValue(true);
+      const onRedirectCallback = vi.fn();
+      mockUserManager.signinRedirectCallback.mockRejectedValue(new Error("access_denied"));
+
+      const TestComponent = () => {
+        const { error: authError, isAuthenticated, isLoading } = useAuth();
+        return (
+          <div>
+            <div data-testid="error">{authError?.message}</div>
+            <div data-testid="authenticated">{isAuthenticated.toString()}</div>
+            <div data-testid="loading">{isLoading.toString()}</div>
+          </div>
+        );
+      };
+
+      render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          onRedirectCallback={onRedirectCallback}
+        >
+          <TestComponent />
+        </OIDCProvider>,
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId("error")).toHaveTextContent("access_denied");
+        expect(screen.getByTestId("authenticated")).toHaveTextContent("false");
+        expect(screen.getByTestId("loading")).toHaveTextContent("false");
+      });
+      expect(onRedirectCallback).not.toHaveBeenCalled();
+    });
+
     it("should use default redirect callback when not provided", async () => {
       mockHasAuthParams.mockReturnValue(true);
       globalThis.location.pathname = "/some/path";
