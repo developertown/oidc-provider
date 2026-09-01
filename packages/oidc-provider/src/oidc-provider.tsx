@@ -21,7 +21,7 @@ import { hasAuthParams } from "./utils";
 export type AppState = {
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
-export type RedirectCallback = (appState: AppState) => void;
+export type RedirectCallback = (appState?: AppState) => void;
 export type LoginWithRedirectOptions = SigninRedirectArgs;
 export type LoginWithRedirect = (opts?: LoginWithRedirectOptions) => Promise<void>;
 export type LoginSilentOptions = SigninSilentArgs;
@@ -146,7 +146,7 @@ export const OIDCProvider: React.FC<Props> = ({
       try {
         if (hasAuthParams()) {
           const token = await client.signinRedirectCallback();
-          onRedirectCallback(token?.state as AppState);
+          onRedirectCallback(token?.state as AppState | undefined);
         }
         const user = await client.getUser();
         dispatch(initialize({ isAuthenticated: Boolean(user), user: user?.profile }));
