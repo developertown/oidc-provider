@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: "22.x"
+  NODE_VERSION: "24.x"
   RUBY_VERSION: "3.0"
   LICENSE_FINDER_VERSION: "7.1.0"
 
@@ -14,10 +14,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: "${{ env.NODE_VERSION }}"
 
@@ -60,7 +60,7 @@ jobs:
         shell: bash
 
       - name: Publish Build Artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: ./packages/oidc-provider/dist
