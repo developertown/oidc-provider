@@ -20,11 +20,10 @@
     "license:check": "turbo run license:check --parallel"
   },
   "devDependencies": {
-    "turbo": "2.7.5"
+    "turbo": "2.10.12"
   },
   "engines": {
-    "npm": ">=10.0.0",
-    "node": ">=22.0.0"
+    "node": ">=24.15.0"
   },
   "packageManager": "yarn@1.22.18"
 }
