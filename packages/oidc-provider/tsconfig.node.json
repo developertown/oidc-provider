@@ -1,0 +1,7 @@
+{
+  "extends": "@developertown/typescript-config/base.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["vitest.config.ts"]
+}
