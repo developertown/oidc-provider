@@ -1,0 +1,16 @@
+# Generated output
+dist/
+build/
+coverage/
+
+# Dependencies and tool caches
+node_modules/
+.turbo/
+
+# Lockfiles are machine-generated
+yarn.lock
+
+# Logs and reports
+*.log
+junit.xml
+test-report.xml

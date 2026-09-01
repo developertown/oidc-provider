@@ -14,12 +14,12 @@
     "clean": "turbo run clean && rm -rf node_modules --continue",
     "lint": "turbo run lint --parallel",
     "lint:fix": "turbo run lint:fix --parallel",
-    "format": "turbo run format --parallel",
-    "format:check": "turbo run format:check  --parallel",
-    "format:fix": "turbo run format:fix  --parallel",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
     "license:check": "turbo run license:check --parallel"
   },
   "devDependencies": {
+    "prettier": "3.9.6",
     "turbo": "2.10.12"
   },
   "engines": {

@@ -27,9 +27,6 @@
   "scripts": {
     "build": "bunchee",
     "clean": "rimraf ./dist",
-    "format": "prettier --ignore-unknown '**/*.*'",
-    "format:check": "yarn run format --check",
-    "format:fix": "yarn run format --write",
     "license:add": "license_finder licenses add",
     "license:approve-package": "license_finder approvals add",
     "license:check": "license_finder",
@@ -58,7 +55,6 @@
     "bunchee": "^7.0.1",
     "eslint": "^10.9.1",
     "jsdom": "^30.0.1",
-    "prettier": "3.9.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "rimraf": "^6.1.3",

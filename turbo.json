@@ -44,15 +44,6 @@
     "clean": {
       "cache": false
     },
-    "format": {
-      "cache": false
-    },
-    "format:check": {
-      "cache": true
-    },
-    "format:fix": {
-      "cache": true
-    },
     "license:check": {
       "cache": true
     }

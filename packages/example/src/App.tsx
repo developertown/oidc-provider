@@ -1,11 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import reactLogo from "./assets/react.svg";
-import {
-  AuthenticationProvider,
-  useAccessToken,
-  useAuth,
-} from "./authentication-provider";
+import { AuthenticationProvider, useAccessToken, useAuth } from "./authentication-provider";
 import viteLogo from "/vite.svg";
 
 function App() {
@@ -25,16 +21,12 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+        <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
       {isAuthenticated ? (
         <>
           <button onClick={() => logout()}>{`Log out ${user?.name}?`}</button>
@@ -73,12 +65,8 @@ const AuthenticatedApp = () => {
       useRefreshTokens
       redirectUri={window.location.origin}
       onAccessTokenExpiring={() => console.warn("user session expiring")}
-      onAccessTokenChanged={(token) =>
-        console.info("user session token", token)
-      }
-      onAccessTokenRefreshError={(error) =>
-        console.error("failed to refresh token", error)
-      }
+      onAccessTokenChanged={(token) => console.info("user session token", token)}
+      onAccessTokenRefreshError={(error) => console.error("failed to refresh token", error)}
       onAccessTokenExpired={() => console.error("user session expired")}
     >
       <App />
