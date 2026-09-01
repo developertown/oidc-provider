@@ -6,21 +6,26 @@
   "license": "MIT",
   "author": "",
   "type": "module",
-  "main": "dist/oidc-provider.esm.js",
-  "module": "dist/oidc-provider.esm.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/oidc-provider.esm.js",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsdx build",
+    "build": "bunchee",
     "clean": "rimraf ./dist",
     "format": "prettier --ignore-unknown '**/*.*'",
     "format:check": "yarn run format --check",
@@ -31,7 +36,7 @@
     "license:permit": "license_finder permitted_licenses add",
     "lint": "eslint .",
     "lint:fix": "yarn run lint --fix",
-    "dev": "tsdx watch",
+    "dev": "bunchee --watch",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
@@ -57,8 +62,6 @@
     "jsdom": "^27.4.0",
     "prettier": "3.8.1",
     "rimraf": "^6.1.2",
-    "tsdx": "^2.0.0",
-    "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.53.1",
     "vitest": "^4.0.18"
