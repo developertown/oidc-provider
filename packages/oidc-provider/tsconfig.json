@@ -1,7 +1,7 @@
 {
   "extends": "@developertown/typescript-config/react-library.json",
   "compilerOptions": {
-    "types": ["vitest/globals"]
+    "types": []
   },
   "include": ["src"],
   "exclude": ["dist", "coverage", "node_modules"]
