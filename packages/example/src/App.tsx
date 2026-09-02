@@ -27,7 +27,7 @@ function App() {
         </p>
       </div>
       <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-      {error && <p>{error.message}</p>}
+      {error && <p role="alert">{error.message}</p>}
       {isAuthenticated ? (
         <>
           <button onClick={() => logout()}>{`Log out ${user?.name}?`}</button>
