@@ -3,6 +3,7 @@ import type { User, UserProfile } from "oidc-client-ts";
 import { UserManager } from "oidc-client-ts";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { Token } from "../oidc-provider";
 import { OIDCProvider, useAuth, useAuthClient } from "../oidc-provider";
 import { StorageTypes } from "../token-storage";
 import * as utils from "../utils";
@@ -763,12 +764,18 @@ describe("OIDCProvider", () => {
       );
 
       await waitFor(() => {
-        expect(mockUserManager.events.addAccessTokenExpiring).toHaveBeenCalledWith(onAccessTokenExpiring);
+        expect(mockUserManager.events.addAccessTokenExpiring).toHaveBeenCalledTimes(1);
       });
+
+      // The provider subscribes a listener of its own so that an inline handler
+      // does not churn the subscription; it forwards to the supplied handler.
+      const listener = vi.mocked(mockUserManager.events.addAccessTokenExpiring).mock.calls[0][0];
+      listener();
+      expect(onAccessTokenExpiring).toHaveBeenCalledTimes(1);
 
       unmount();
 
-      expect(mockUserManager.events.removeAccessTokenExpiring).toHaveBeenCalledWith(onAccessTokenExpiring);
+      expect(mockUserManager.events.removeAccessTokenExpiring).toHaveBeenCalledWith(listener);
     });
 
     it("should register and unregister onAccessTokenExpired", async () => {
@@ -786,12 +793,18 @@ describe("OIDCProvider", () => {
       );
 
       await waitFor(() => {
-        expect(mockUserManager.events.addAccessTokenExpired).toHaveBeenCalledWith(onAccessTokenExpired);
+        expect(mockUserManager.events.addAccessTokenExpired).toHaveBeenCalledTimes(1);
       });
+
+      // The provider subscribes a listener of its own so that an inline handler
+      // does not churn the subscription; it forwards to the supplied handler.
+      const listener = vi.mocked(mockUserManager.events.addAccessTokenExpired).mock.calls[0][0];
+      listener();
+      expect(onAccessTokenExpired).toHaveBeenCalledTimes(1);
 
       unmount();
 
-      expect(mockUserManager.events.removeAccessTokenExpired).toHaveBeenCalledWith(onAccessTokenExpired);
+      expect(mockUserManager.events.removeAccessTokenExpired).toHaveBeenCalledWith(listener);
     });
 
     it("should register and unregister onAccessTokenRefreshError", async () => {
@@ -809,12 +822,19 @@ describe("OIDCProvider", () => {
       );
 
       await waitFor(() => {
-        expect(mockUserManager.events.addSilentRenewError).toHaveBeenCalledWith(onAccessTokenRefreshError);
+        expect(mockUserManager.events.addSilentRenewError).toHaveBeenCalledTimes(1);
       });
+
+      // The provider subscribes a listener of its own so that an inline handler
+      // does not churn the subscription; it forwards to the supplied handler.
+      const listener = vi.mocked(mockUserManager.events.addSilentRenewError).mock.calls[0][0];
+      const renewError = new Error("silent renew failed");
+      listener(renewError);
+      expect(onAccessTokenRefreshError).toHaveBeenCalledWith(renewError);
 
       unmount();
 
-      expect(mockUserManager.events.removeSilentRenewError).toHaveBeenCalledWith(onAccessTokenRefreshError);
+      expect(mockUserManager.events.removeSilentRenewError).toHaveBeenCalledWith(listener);
     });
 
     it("should call onAccessTokenChanged when user is loaded initially", async () => {
@@ -896,6 +916,169 @@ describe("OIDCProvider", () => {
       unmount();
 
       expect(mockUserManager.events.removeUserLoaded).toHaveBeenCalledWith(userLoadedCallback);
+    });
+
+    it("should not resubscribe any event handler passed as an inline callback", async () => {
+      const onAccessTokenChanged = vi.fn();
+      const onAccessTokenExpiring = vi.fn();
+      const onAccessTokenExpired = vi.fn();
+      const onAccessTokenRefreshError = vi.fn();
+
+      const renderProvider = () => (
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          onAccessTokenChanged={(token) => onAccessTokenChanged(token)}
+          onAccessTokenExpiring={() => onAccessTokenExpiring()}
+          onAccessTokenExpired={() => onAccessTokenExpired()}
+          onAccessTokenRefreshError={(error) => onAccessTokenRefreshError(error)}
+        >
+          <div>Test</div>
+        </OIDCProvider>
+      );
+
+      const { rerender } = render(renderProvider());
+
+      await waitFor(() => {
+        expect(mockUserManager.events.addUserLoaded).toHaveBeenCalledTimes(1);
+      });
+
+      rerender(renderProvider());
+      rerender(renderProvider());
+
+      expect(mockUserManager.events.addUserLoaded).toHaveBeenCalledTimes(1);
+      expect(mockUserManager.events.addAccessTokenExpiring).toHaveBeenCalledTimes(1);
+      expect(mockUserManager.events.addAccessTokenExpired).toHaveBeenCalledTimes(1);
+      expect(mockUserManager.events.addSilentRenewError).toHaveBeenCalledTimes(1);
+
+      expect(mockUserManager.events.removeUserLoaded).not.toHaveBeenCalled();
+      expect(mockUserManager.events.removeAccessTokenExpiring).not.toHaveBeenCalled();
+      expect(mockUserManager.events.removeAccessTokenExpired).not.toHaveBeenCalled();
+      expect(mockUserManager.events.removeSilentRenewError).not.toHaveBeenCalled();
+    });
+
+    it("should unsubscribe an event handler that is withdrawn", async () => {
+      const onAccessTokenExpiring = vi.fn();
+
+      const renderProvider = (handler?: () => void) => (
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          onAccessTokenExpiring={handler}
+        >
+          <div>Test</div>
+        </OIDCProvider>
+      );
+
+      const { rerender } = render(renderProvider(onAccessTokenExpiring));
+
+      await waitFor(() => {
+        expect(mockUserManager.events.addAccessTokenExpiring).toHaveBeenCalledTimes(1);
+      });
+
+      const listener = vi.mocked(mockUserManager.events.addAccessTokenExpiring).mock.calls[0][0];
+
+      rerender(renderProvider(undefined));
+
+      expect(mockUserManager.events.removeAccessTokenExpiring).toHaveBeenCalledWith(listener);
+    });
+
+    it("should not resubscribe when onAccessTokenChanged changes identity between renders", async () => {
+      const onAccessTokenChanged = vi.fn();
+
+      // An inline arrow, as consumer code in the README writes it: a fresh
+      // function identity on every single render.
+      const renderProvider = () => (
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          onAccessTokenChanged={(token) => onAccessTokenChanged(token)}
+        >
+          <div>Test</div>
+        </OIDCProvider>
+      );
+
+      const { rerender } = render(renderProvider());
+
+      await waitFor(() => {
+        expect(onAccessTokenChanged).toHaveBeenCalledTimes(1);
+      });
+
+      rerender(renderProvider());
+      rerender(renderProvider());
+
+      // Re-running the effect would tear down the subscription, re-read the user
+      // and replay the token the consumer already has.
+      expect(mockUserManager.events.addUserLoaded).toHaveBeenCalledTimes(1);
+      expect(mockUserManager.events.removeUserLoaded).not.toHaveBeenCalled();
+      expect(onAccessTokenChanged).toHaveBeenCalledTimes(1);
+    });
+
+    it("should invoke the most recent onAccessTokenChanged when the user loads", async () => {
+      const firstHandler = vi.fn();
+      const secondHandler = vi.fn();
+
+      const renderProvider = (onAccessTokenChanged: (token: Token) => void) => (
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          onAccessTokenChanged={onAccessTokenChanged}
+        >
+          <div>Test</div>
+        </OIDCProvider>
+      );
+
+      const { rerender } = render(renderProvider(firstHandler));
+
+      await waitFor(() => {
+        expect(mockUserManager.events.addUserLoaded).toHaveBeenCalled();
+      });
+
+      rerender(renderProvider(secondHandler));
+      firstHandler.mockClear();
+
+      const userLoadedCallback = vi.mocked(mockUserManager.events.addUserLoaded).mock.calls[0][0];
+      userLoadedCallback(mockUser as User);
+
+      expect(secondHandler).toHaveBeenCalledWith({
+        idToken: "mock-id-token",
+        accessToken: "mock-access-token",
+        refreshToken: "mock-refresh-token",
+        scope: "openid profile email",
+        expiresAt: mockUser.expires_at,
+      });
+      expect(firstHandler).not.toHaveBeenCalled();
+    });
+
+    it("should not call onAccessTokenChanged once the provider has unmounted", async () => {
+      const onAccessTokenChanged = vi.fn();
+      let resolveGetUser!: (user: User) => void;
+      mockUserManager.getUser.mockReturnValue(
+        new Promise<User>((resolve) => {
+          resolveGetUser = resolve;
+        }),
+      );
+
+      const { unmount } = render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+          onAccessTokenChanged={onAccessTokenChanged}
+        >
+          <div>Test</div>
+        </OIDCProvider>,
+      );
+
+      unmount();
+      resolveGetUser(mockUser as User);
+      await Promise.resolve();
+
+      expect(onAccessTokenChanged).not.toHaveBeenCalled();
     });
 
     it("should handle onAccessTokenChanged when user has no token", async () => {
