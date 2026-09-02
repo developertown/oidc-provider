@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+
+// useLayoutEffect warns when a tree is rendered on the server. The ref it keeps
+// current is only ever read from browser events, so falling back to useEffect
+// off the DOM costs nothing.
+const useIsomorphicLayoutEffect = typeof document !== "undefined" ? useLayoutEffect : useEffect;
 
 /**
  * Gives an event handler a stable identity so that a consumer passing an inline
@@ -14,7 +19,11 @@ const useEventCallback = <A extends unknown[], R>(
 ): ((...args: A) => R | undefined) | undefined => {
   const handlerRef = useRef(handler);
 
-  useEffect(() => {
+  // Committing the handler in a layout effect rather than a passive one closes
+  // the window between commit and paint in which an OIDC event — the listener is
+  // already subscribed — would still reach the previous handler, or one the
+  // consumer just withdrew.
+  useIsomorphicLayoutEffect(() => {
     handlerRef.current = handler;
   }, [handler]);
 
