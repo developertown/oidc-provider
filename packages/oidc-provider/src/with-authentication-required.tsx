@@ -62,7 +62,7 @@ const withAuthenticationRequired =
       return onRedirecting();
     }
 
-    return <>{/*Should by impossible*/}</>;
+    return <>{/* Should be impossible */}</>;
   };
 
 export default withAuthenticationRequired;
