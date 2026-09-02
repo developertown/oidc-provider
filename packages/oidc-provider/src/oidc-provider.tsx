@@ -16,12 +16,13 @@ import { initialState } from "./state";
 import type { AuthState } from "./state";
 import tokenStorageForType, { StorageTypes } from "./token-storage";
 import type { StorageType } from "./token-storage";
+import useEventCallback from "./use-event-callback";
 import { hasAuthParams } from "./utils";
 
 export type AppState = {
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
-export type RedirectCallback = (appState: AppState) => void;
+export type RedirectCallback = (appState?: AppState) => void;
 export type LoginWithRedirectOptions = SigninRedirectArgs;
 export type LoginWithRedirect = (opts?: LoginWithRedirectOptions) => Promise<void>;
 export type LoginSilentOptions = SigninSilentArgs;
@@ -145,8 +146,17 @@ export const OIDCProvider: React.FC<Props> = ({
     (async (): Promise<void> => {
       try {
         if (hasAuthParams()) {
-          const token = await client.signinRedirectCallback();
-          onRedirectCallback(token?.state as AppState);
+          try {
+            const token = await client.signinRedirectCallback();
+            onRedirectCallback(token?.state as AppState | undefined);
+          } catch (e) {
+            // An error response (?error=...&state=...) satisfies hasAuthParams but
+            // rejects here after the pending sign-in state has been consumed. Clear
+            // the callback params anyway, otherwise a reload replays the consumed
+            // state and masks this error with a state mismatch.
+            onRedirectCallback();
+            throw e;
+          }
         }
         const user = await client.getUser();
         dispatch(initialize({ isAuthenticated: Boolean(user), user: user?.profile }));
@@ -156,73 +166,73 @@ export const OIDCProvider: React.FC<Props> = ({
     })();
   }, [client, onRedirectCallback]);
 
-  useEffect(() => {
-    if (onAccessTokenExpiring) {
-      client.events.addAccessTokenExpiring(onAccessTokenExpiring);
-    }
-    return () => {
-      if (onAccessTokenExpiring) {
-        client.events.removeAccessTokenExpiring(onAccessTokenExpiring);
-      }
-    };
-  }, [client, onAccessTokenExpiring]);
+  // Consumers routinely pass these as inline arrows, which would otherwise churn
+  // the underlying subscription on every render. Each listener below keeps one
+  // identity for as long as its handler is supplied.
+  const accessTokenChanged = useEventCallback(onAccessTokenChanged);
+  const accessTokenExpiring = useEventCallback(onAccessTokenExpiring);
+  const accessTokenExpired = useEventCallback(onAccessTokenExpired);
+  const accessTokenRefreshError = useEventCallback(onAccessTokenRefreshError);
 
   useEffect(() => {
-    let userLoadedCallback: UserLoadedCallback;
-
-    if (onAccessTokenChanged) {
-      userLoadedCallback = ({
-        id_token: idToken,
-        access_token: accessToken,
-        refresh_token: refreshToken,
-        expires_at: expiresAt,
-        scope,
-      }) =>
-        onAccessTokenChanged({
-          idToken: idToken ?? "",
-          accessToken,
-          refreshToken,
-          scope: scope ?? "",
-          expiresAt: expiresAt ?? 0,
-        });
-
-      (async (): Promise<void> => {
-        const user = await client.getUser();
-        if (user) {
-          userLoadedCallback(user);
-        }
-      })();
-
-      client.events.addUserLoaded(userLoadedCallback);
+    if (!accessTokenExpiring) {
+      return;
     }
-    return () => {
-      if (userLoadedCallback) {
-        client.events.removeUserLoaded(userLoadedCallback);
-      }
-    };
-  }, [client, onAccessTokenChanged]);
+    client.events.addAccessTokenExpiring(accessTokenExpiring);
+    return () => client.events.removeAccessTokenExpiring(accessTokenExpiring);
+  }, [client, accessTokenExpiring]);
 
   useEffect(() => {
-    if (onAccessTokenExpired) {
-      client.events.addAccessTokenExpired(onAccessTokenExpired);
+    if (!accessTokenChanged) {
+      return;
     }
-    return () => {
-      if (onAccessTokenExpired) {
-        client.events.removeAccessTokenExpired(onAccessTokenExpired);
+    let unsubscribed = false;
+
+    const userLoadedCallback: UserLoadedCallback = ({
+      id_token: idToken,
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      expires_at: expiresAt,
+      scope,
+    }) =>
+      accessTokenChanged({
+        idToken: idToken ?? "",
+        accessToken,
+        refreshToken,
+        scope: scope ?? "",
+        expiresAt: expiresAt ?? 0,
+      });
+
+    (async (): Promise<void> => {
+      const user = await client.getUser();
+      if (!unsubscribed && user) {
+        userLoadedCallback(user);
       }
+    })();
+
+    client.events.addUserLoaded(userLoadedCallback);
+
+    return () => {
+      unsubscribed = true;
+      client.events.removeUserLoaded(userLoadedCallback);
     };
-  }, [client, onAccessTokenExpired]);
+  }, [client, accessTokenChanged]);
 
   useEffect(() => {
-    if (onAccessTokenRefreshError) {
-      client.events.addSilentRenewError(onAccessTokenRefreshError);
+    if (!accessTokenExpired) {
+      return;
     }
-    return () => {
-      if (onAccessTokenRefreshError) {
-        client.events.removeSilentRenewError(onAccessTokenRefreshError);
-      }
-    };
-  }, [client, onAccessTokenRefreshError]);
+    client.events.addAccessTokenExpired(accessTokenExpired);
+    return () => client.events.removeAccessTokenExpired(accessTokenExpired);
+  }, [client, accessTokenExpired]);
+
+  useEffect(() => {
+    if (!accessTokenRefreshError) {
+      return;
+    }
+    client.events.addSilentRenewError(accessTokenRefreshError);
+    return () => client.events.removeSilentRenewError(accessTokenRefreshError);
+  }, [client, accessTokenRefreshError]);
 
   return (
     <OIDCContext.Provider

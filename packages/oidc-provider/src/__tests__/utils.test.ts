@@ -84,6 +84,26 @@ describe("utils", () => {
       const searchParams = "?code=abc=123&state=xyz=789";
       expect(hasAuthParams(searchParams)).toBe(true);
     });
+
+    it("should return true when an error response is returned with state", () => {
+      const searchParams = "?error=access_denied&state=xyz789";
+      expect(hasAuthParams(searchParams)).toBe(true);
+    });
+
+    it("should return true when an error response carries a description", () => {
+      const searchParams = "?error=access_denied&error_description=User%20denied%20consent&state=xyz789";
+      expect(hasAuthParams(searchParams)).toBe(true);
+    });
+
+    it("should return false when only an error param is present", () => {
+      const searchParams = "?error=access_denied";
+      expect(hasAuthParams(searchParams)).toBe(false);
+    });
+
+    it("should not treat an error description on its own as an error response", () => {
+      const searchParams = "?error_description=User%20denied%20consent&state=xyz789";
+      expect(hasAuthParams(searchParams)).toBe(false);
+    });
   });
 
   describe("getUniqueScopes", () => {

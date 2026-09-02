@@ -11,6 +11,5 @@
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
     }
-  },
-  "snyk.advanced.autoSelectOrganization": true
+  }
 }

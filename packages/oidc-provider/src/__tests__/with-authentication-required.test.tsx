@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import type { UserProfile } from "oidc-client-ts";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -13,6 +13,10 @@ vi.mock("../oidc-provider", () => ({
 import { useAuth } from "../oidc-provider";
 
 const mockUseAuth = vi.mocked(useAuth);
+
+// Lets any queued promise callbacks settle and React flush the renders they
+// schedule, so a test can assert that nothing further happened.
+const flushPendingWork = () => act(async () => await new Promise((resolve) => setTimeout(resolve, 0)));
 
 const mockUser: UserProfile = {
   sub: "user123",
@@ -370,24 +374,8 @@ describe("withAuthenticationRequired", () => {
       });
     });
 
-    it("should handle loginWithRedirect rejection gracefully", async () => {
-      // Create a mock that simulates rejection but handles it to avoid test warnings
-      let resolveTest: () => void;
-      const testComplete = new Promise<void>((resolve) => {
-        resolveTest = resolve;
-      });
-
-      const handleRejection = () => {
-        // Catch the error to prevent unhandled rejection
-      };
-
-      const completeTest = () => {
-        resolveTest();
-      };
-
-      const failingLoginWithRedirect = vi.fn(() =>
-        Promise.reject(new Error("Login redirect failed")).catch(handleRejection).finally(completeTest),
-      );
+    it("should render the rejection from loginWithRedirect through onError", async () => {
+      const failingLoginWithRedirect = vi.fn().mockRejectedValue(new Error("Login redirect failed"));
 
       mockUseAuth.mockReturnValue({
         isAuthenticated: false,
@@ -400,18 +388,77 @@ describe("withAuthenticationRequired", () => {
         logout: vi.fn(),
       });
 
-      const ProtectedComponent = withAuthenticationRequired(TestComponent);
+      const options: WithAuthenticationRequiredOptions = {
+        onRedirecting: () => <div data-testid="redirecting">Redirecting...</div>,
+        onError: (error) => <div data-testid="login-error">{error.message}</div>,
+      };
+
+      const ProtectedComponent = withAuthenticationRequired(TestComponent, options);
       render(<ProtectedComponent />);
 
-      await waitFor(() => {
-        expect(failingLoginWithRedirect).toHaveBeenCalledTimes(1);
+      expect(await screen.findByTestId("login-error")).toHaveTextContent("Login redirect failed");
+      expect(screen.queryByTestId("redirecting")).not.toBeInTheDocument();
+    });
+
+    it("should not retry loginWithRedirect after it rejects", async () => {
+      const failingLoginWithRedirect = vi.fn().mockRejectedValue(new Error("Login redirect failed"));
+
+      mockUseAuth.mockReturnValue({
+        isAuthenticated: false,
+        isLoading: false,
+        error: undefined,
+        user: undefined,
+        loginWithRedirect: failingLoginWithRedirect,
+        loginSilent: vi.fn(),
+        getAccessTokenSilently: vi.fn(),
+        logout: vi.fn(),
       });
 
-      // Wait for the promise to complete
-      await testComplete;
+      const options: WithAuthenticationRequiredOptions = {
+        onError: (error) => <div data-testid="login-error">{error.message}</div>,
+      };
 
-      // Component should handle the error and stop showing redirecting state
-      // The finally block ensures setLoading(false) is called
+      const ProtectedComponent = withAuthenticationRequired(TestComponent, options);
+      render(<ProtectedComponent />);
+
+      await screen.findByTestId("login-error");
+
+      // A retry loop would spin here: each rejection would clear the guard, the
+      // effect would fire again, and the call count would climb every tick.
+      await flushPendingWork();
+      await flushPendingWork();
+
+      expect(failingLoginWithRedirect).toHaveBeenCalledTimes(1);
+    });
+
+    it("should keep rendering onRedirecting once loginWithRedirect resolves", async () => {
+      mockUseAuth.mockReturnValue({
+        isAuthenticated: false,
+        isLoading: false,
+        error: undefined,
+        user: undefined,
+        loginWithRedirect: mockLoginWithRedirect,
+        loginSilent: vi.fn(),
+        getAccessTokenSilently: vi.fn(),
+        logout: vi.fn(),
+      });
+
+      const options: WithAuthenticationRequiredOptions = {
+        onRedirecting: () => <div data-testid="redirecting">Redirecting...</div>,
+      };
+
+      const ProtectedComponent = withAuthenticationRequired(TestComponent, options);
+      render(<ProtectedComponent />);
+
+      await screen.findByTestId("redirecting");
+
+      // signinRedirect resolves once the browser is on its way to the identity
+      // provider, so the component stays put rather than starting sign-in over.
+      await flushPendingWork();
+      await flushPendingWork();
+
+      expect(mockLoginWithRedirect).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId("redirecting")).toBeInTheDocument();
     });
   });
 

@@ -20,8 +20,10 @@ const withAuthenticationRequired =
   ): React.FC<P> =>
   (props: P): React.JSX.Element => {
     const { isAuthenticated, isLoading: isInitializing, error, loginWithRedirect } = useAuth();
-    const [isLoading, setLoading] = useState(false);
-    const hasError = Boolean(error);
+    const [isRedirecting, setRedirecting] = useState(false);
+    const [redirectError, setRedirectError] = useState<Error | undefined>(undefined);
+    const failure = error ?? redirectError;
+    const hasError = Boolean(failure);
     const {
       loginWithRedirectParams = defaultLoginWithRedirectParams,
       onInitializing = defaultOnRedirecting,
@@ -30,26 +32,37 @@ const withAuthenticationRequired =
     } = options;
 
     useEffect(() => {
-      if (isInitializing || isLoading || isAuthenticated || hasError) {
+      if (isInitializing || isRedirecting || isAuthenticated || hasError) {
         return;
       }
-      setLoading(true);
-      loginWithRedirect(loginWithRedirectParams()).finally(() => setLoading(false));
-    }, [isInitializing, isLoading, isAuthenticated, hasError, loginWithRedirect, loginWithRedirectParams]);
+      setRedirecting(true);
+      // Sign-in is a one-way trip: on success the browser leaves for the identity
+      // provider, so `isRedirecting` stays set rather than releasing the guard and
+      // starting the sign-in over. A failure records the error instead, which both
+      // renders it and keeps the guard closed.
+      loginWithRedirect(loginWithRedirectParams()).catch((e) => {
+        setRedirecting(false);
+        setRedirectError(e as Error);
+      });
+    }, [isInitializing, isRedirecting, isAuthenticated, hasError, loginWithRedirect, loginWithRedirectParams]);
 
     if (isInitializing) {
       return onInitializing();
     }
 
-    if (isLoading) {
+    if (hasError) {
+      return onError(failure!);
+    }
+
+    if (isAuthenticated) {
+      return <Component {...props} />;
+    }
+
+    if (isRedirecting) {
       return onRedirecting();
     }
 
-    if (hasError) {
-      return onError(error!);
-    }
-
-    return isAuthenticated ? <Component {...props} /> : <>{/*Should by impossible*/}</>;
+    return <>{/* Should be impossible */}</>;
   };
 
 export default withAuthenticationRequired;
