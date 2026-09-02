@@ -1,6 +1,6 @@
 {
   "name": "@developertown/oidc-provider",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "React authentication provider built on oidc-client-ts, with first-class support for Auth0, Azure AD, and Amazon Cognito.",
   "keywords": [
     "oidc",
