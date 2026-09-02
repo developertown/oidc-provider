@@ -146,8 +146,17 @@ export const OIDCProvider: React.FC<Props> = ({
     (async (): Promise<void> => {
       try {
         if (hasAuthParams()) {
-          const token = await client.signinRedirectCallback();
-          onRedirectCallback(token?.state as AppState | undefined);
+          try {
+            const token = await client.signinRedirectCallback();
+            onRedirectCallback(token?.state as AppState | undefined);
+          } catch (e) {
+            // An error response (?error=...&state=...) satisfies hasAuthParams but
+            // rejects here after the pending sign-in state has been consumed. Clear
+            // the callback params anyway, otherwise a reload replays the consumed
+            // state and masks this error with a state mismatch.
+            onRedirectCallback();
+            throw e;
+          }
         }
         const user = await client.getUser();
         dispatch(initialize({ isAuthenticated: Boolean(user), user: user?.profile }));

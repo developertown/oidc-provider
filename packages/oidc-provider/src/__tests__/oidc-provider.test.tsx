@@ -245,6 +245,8 @@ describe("OIDCProvider", () => {
     it("should surface an error response from the identity provider", async () => {
       // A declined consent comes back as ?error=access_denied&state=..., which
       // signinRedirectCallback rejects after clearing the pending sign-in state.
+      // The callback params still have to be stripped, or a reload replays the
+      // consumed state and reports a state mismatch instead of this error.
       mockHasAuthParams.mockReturnValue(true);
       const onRedirectCallback = vi.fn();
       mockUserManager.signinRedirectCallback.mockRejectedValue(new Error("access_denied"));
@@ -276,7 +278,28 @@ describe("OIDCProvider", () => {
         expect(screen.getByTestId("authenticated")).toHaveTextContent("false");
         expect(screen.getByTestId("loading")).toHaveTextContent("false");
       });
-      expect(onRedirectCallback).not.toHaveBeenCalled();
+      expect(onRedirectCallback).toHaveBeenCalledWith();
+    });
+
+    it("should strip the callback params with the default redirect callback on an error response", async () => {
+      mockHasAuthParams.mockReturnValue(true);
+      globalThis.location.pathname = "/some/path";
+      globalThis.location.search = "?error=access_denied&state=abc";
+      mockUserManager.signinRedirectCallback.mockRejectedValue(new Error("access_denied"));
+
+      render(
+        <OIDCProvider
+          authority="https://example.com"
+          client_id="test-client"
+          redirect_uri="https://example.com/callback"
+        >
+          <div>Test</div>
+        </OIDCProvider>,
+      );
+
+      await waitFor(() => {
+        expect(globalThis.history.replaceState).toHaveBeenCalledWith({}, document.title, "/some/path");
+      });
     });
 
     it("should use default redirect callback when not provided", async () => {
