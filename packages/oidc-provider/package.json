@@ -79,7 +79,7 @@
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-v8": "^5.0.0",
     "bunchee": "^7.0.1",
     "eslint": "^10.9.1",
     "jsdom": "^30.0.1",
