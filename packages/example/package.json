@@ -19,7 +19,7 @@
   "devDependencies": {
     "@developertown/eslint-config": "*",
     "@developertown/typescript-config": "*",
-    "@types/node": "^24.13.3",
+    "@types/node": "^25.9.5",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@vitejs/plugin-react": "^6.1.1",
